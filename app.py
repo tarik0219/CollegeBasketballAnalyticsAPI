@@ -1,6 +1,6 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from utilscbb.db import get_db
-
+from utilscbb.predict import make_prediction_api
 app = Flask(__name__)
 
 
@@ -35,6 +35,14 @@ def get_all_team_data():
     query,teamsTable = get_db()
     teams = teamsTable.all()
     return jsonify(teams)
+
+#Predict Game
+@app.route('/predict', methods=['POST'])
+def predict_game():
+    data = request.get_json()
+    homeScore,awayScore,prob = make_prediction_api(data['homeData'],data['awayData'],data['neutralSite'])
+    return jsonify({'homeScore':homeScore,'awayScore':awayScore,'prob':prob})
+
 
 if __name__ == '__main__':
     app.run() 
