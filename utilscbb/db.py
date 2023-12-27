@@ -13,7 +13,7 @@ def get_db():
     return query,teamsTable
 
 def get_db_pa():
-    db = TinyDB(dbfile)
+    db = TinyDB(pafile)
     query = Query()
     teamsTable = db.table('teams')
     return query,teamsTable
