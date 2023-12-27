@@ -3,6 +3,11 @@ from utilscbb.db import get_db
 
 app = Flask(__name__)
 
+
+@app.route('/', methods=['GET'])
+def home():
+    return 'College Basketball API'
+
 #Get Team Data by ID
 @app.route('/teamData/<teamID>', methods=['GET'])
 def get_team_data(teamID):
