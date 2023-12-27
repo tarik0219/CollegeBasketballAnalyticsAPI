@@ -12,9 +12,9 @@ def home():
 @app.route('/teamData/<teamID>', methods=['GET'])
 def get_team_data(teamID):
     query,teamsTable = get_db()
-    team = teamsTable.search(query.id == teamID)[0]
+    team = teamsTable.search(query.id == teamID)
     if len(team) > 0:
-        return jsonify(team)
+        return jsonify(team[0])
     else:
         return jsonify({"error":"Team not found"}), 404
     
@@ -23,9 +23,9 @@ def get_team_data(teamID):
 @app.route('/teamData/teamName/<teamName>', methods=['GET'])
 def get_team_data_by_name(teamName):
     query,teamsTable = get_db()
-    team = teamsTable.search(query.teamName == teamName)[0]
+    team = teamsTable.search(query.teamName == teamName)
     if len(team) > 0:
-        return jsonify(team)
+        return jsonify(team[0])
     else:
         return jsonify({"error":"Team not found"}), 404
 
