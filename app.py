@@ -17,6 +17,17 @@ def get_team_data(teamID):
         return jsonify(team)
     else:
         return jsonify({"error":"Team not found"}), 404
+    
+
+#Get Team Data by Name
+@app.route('/teamData/teamName/<teamName>', methods=['GET'])
+def get_team_data_by_name(teamName):
+    query,teamsTable = get_db()
+    team = teamsTable.search(query.teamName == teamName)[0]
+    if len(team) > 0:
+        return jsonify(team)
+    else:
+        return jsonify({"error":"Team not found"}), 404
 
 #Get All Team Data
 @app.route('/teamData', methods=['GET'])
