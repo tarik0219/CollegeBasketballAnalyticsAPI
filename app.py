@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from utilscbb.db import get_db
 from utilscbb.predict import make_prediction_api
+from requestModel.requestModel import PredictModel,PredictModelList
 app = Flask(__name__)
 
 
@@ -39,10 +40,27 @@ def get_all_team_data():
 #Predict Game
 @app.route('/predict', methods=['POST'])
 def predict_game():
-    data = request.get_json()
-    homeScore,awayScore,prob = make_prediction_api(data['homeData'],data['awayData'],data['neutralSite'])
-    return jsonify({'homeScore':homeScore,'awayScore':awayScore,'prob':prob})
+    try:
+        PredictModel(**request.get_json())
+        data = request.get_json()
+        homeScore,awayScore,prob = make_prediction_api(data['homeData'],data['awayData'],data['neutralSite'])
+        return jsonify({'homeScore':homeScore,'awayScore':awayScore,'prob':prob})
+    except:
+        return jsonify({"error":"Invalid JSON"}), 400
 
+#Predict Games
+@app.route('/predictList', methods=['POST'])
+def predict_games():
+    try:
+        PredictModelList(**request.get_json())
+        data = request.get_json()
+        response = []
+        for game in data['games']:
+            homeScore,awayScore,prob = make_prediction_api(game['homeData'],game['awayData'],game['neutralSite'])
+            response.append({'homeScore':homeScore,'awayScore':awayScore,'prob':prob})
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({"error":"Invalid JSON"}), 400
 
 if __name__ == '__main__':
     app.run() 
