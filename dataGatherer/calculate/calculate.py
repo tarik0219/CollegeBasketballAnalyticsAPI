@@ -23,12 +23,14 @@ def addAverage(query,teamsTable):
             "defRating":calc_average('defRating', ["barttorvik","kenpom"], team),
             "TempoRating":calc_average('TempoRating', ["barttorvik","kenpom"], team),
         }
+        netRanking = team['ranks']['net_rank']
         team['ranks'] = {
             'stat_rank': None,
             "rank": None,
             "rankOff": None,
             "rankDef": None,
-            "rankTempo": None
+            "rankTempo": None,
+            "net_rank": netRanking
         }
         teamsTable.upsert(team, query.id == team['id'])
 
