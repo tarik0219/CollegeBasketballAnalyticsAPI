@@ -6,6 +6,9 @@ import os
 dbfile = os.path.join(os.getcwd(), constants.dbFileName)
 pafile = os.path.join(os.getcwd(), constants.paFileName)
 
+cacheFile = os.path.join(os.getcwd(), constants.cacheFileName)
+paCacheFile = os.path.join(os.getcwd(), constants.paCacheFileName)
+
 def get_db():
     db = TinyDB(dbfile)
     query = Query()
@@ -17,3 +20,16 @@ def get_db_pa():
     query = Query()
     teamsTable = db.table('teams')
     return query,teamsTable
+
+
+def get_cache():
+    db = TinyDB(cacheFile)
+    query = Query()
+    cacheTable = db.table('cache')
+    return query,cacheTable
+
+def get_cache_pa():
+    db = TinyDB(paCacheFile)
+    query = Query()
+    cacheTable = db.table('cache')
+    return query,cacheTable

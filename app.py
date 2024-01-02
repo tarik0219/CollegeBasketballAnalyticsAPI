@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from utilscbb.db import get_db
+from utilscbb.db import get_db, get_cache
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 app = Flask(__name__)
@@ -61,6 +61,24 @@ def predict_games():
         return jsonify(response)
     except Exception as e:
         return jsonify({"error":"Invalid JSON"}), 400
+    
+@app.route('/getOdds/<gameID>', methods=['GET'])
+def get_odds(gameID):
+    query,teamsTable = get_cache()
+    game = teamsTable.search(query.gameID == gameID)
+    if len(game) > 0:
+        return jsonify(game[0])
+    else:
+        return jsonify({"error":"Game not found"}), 404
+
+
+@app.route('/getOddsList', methods=['POST'])
+def get_odds_list():
+    data = request.get_json()
+    gameIDs = data['gameIDs']
+    query,cacheTable = get_cache()
+    response = cacheTable.search(query.gameID.one_of(gameIDs))
+    return jsonify({"games":response})
 
 if __name__ == '__main__':
     app.run() 

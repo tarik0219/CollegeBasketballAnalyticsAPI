@@ -7,8 +7,8 @@ from dataGatherer.net import net
 import datetime
 import warnings
 from dataGatherer.record import schedule
+from dataGatherer.espn.getOdds import get_odds_by_date
 from constants import constants
-import shutil
 
 
 # Ignore all warnings
@@ -24,8 +24,10 @@ previous_date = previous_date.strftime("%Y%m%d")
 
 try:
     query,teamsTable = db.get_db()
+    cacheQuery,cacheTable = db.get_cache()
 except:
     query,teamsTable = db.get_db_pa()
+    cacheQuery,cacheTable = db.get_cache_pa()
 
 print('Getting Kenpom Data')
 kenpomTeams = kenpom.UpdateKenpom()
@@ -74,3 +76,15 @@ try:
     print("Calculated Records")
 except Exception as e:
     print("Unable to calculate records Error: ", e)
+
+#Add Odds
+print("Adding Odds")
+try:
+    todayDate = datetime.now().strftime("%Y%m%d")
+    oddsResponseMap, oddsResponseList = get_odds_by_date(todayDate)
+    cacheTable.insert_multiple(oddsResponseList)
+except:
+    print("Unable to add odds")
+
+
+    
