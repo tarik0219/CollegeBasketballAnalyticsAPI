@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from utilscbb.db import get_db, get_cache
+from utilscbb.db import get_db, get_cache, get_cs
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 app = Flask(__name__)
@@ -79,6 +79,16 @@ def get_odds_list():
     query,cacheTable = get_cache()
     response = cacheTable.search(query.gameID.one_of(gameIDs))
     return jsonify({"games":response})
+
+@app.route('/getConferenceStandings/<conference>', methods=['GET'])
+def get_conference_standings(conference):
+    query,teamsTable = get_cs()
+    standings = teamsTable.search(query.conference == conference)
+    if len(standings) > 0:
+        return jsonify(standings)
+    else:
+        return jsonify({"error":"Conference not found"}), 404
+
 
 if __name__ == '__main__':
     app.run() 
