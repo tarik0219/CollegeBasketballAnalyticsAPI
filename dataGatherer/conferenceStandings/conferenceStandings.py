@@ -1,0 +1,136 @@
+import requests
+from gql import Client, gql
+from gql.transport.aiohttp import AIOHTTPTransport
+import random
+import copy
+from utilscbb.config import apiKey
+
+def call_team_data():
+    url = "https://koric2.pythonanywhere.com/teamData"
+    payload={}
+    response = requests.request("GET", url, data=payload).json()
+    return response
+
+def get_schedule_query():
+    stringQuery = """
+        query ($teamID: String!, $year: Int!, $netRank: Boolean!) {
+          scheduleData(teamID: $teamID, year: $year, netRank: $netRank) {
+            teamID
+            games {
+                  completed
+                  winProbability
+                  opponentId
+                  homeTeamId
+                  gameType
+                }
+    
+            records {
+              confLoss
+              confWin
+            }
+                }
+        }
+        """
+    return stringQuery
+
+
+def get_schedule_data(teamID, year, netRank):
+    params = {
+        "teamID": teamID,
+        "year": year,
+        "netRank": netRank
+    }
+    appSyncURL = "https://5pb6ihqy4zbe7gftm4uw6nojci.appsync-api.us-east-2.amazonaws.com/graphql"
+    query = gql(get_schedule_query())
+    transport = AIOHTTPTransport(url=appSyncURL, headers={'x-api-key': apiKey})
+    client = Client(transport=transport)
+    result = client.execute(query, variable_values=params)
+    return result
+
+def get_standings_games(conference):
+    response = call_team_data()
+    teamIds = []
+    for team in response:
+        if team['conference'] == conference:
+            teamIds.append(team['id'])
+
+    conferenceGames = []
+    standings = {}
+    for team in teamIds:
+        response = get_schedule_data(team,2024,True)['scheduleData']
+        standings[response['teamID']] = response['records']
+        for game in response['games']:
+            if game['gameType'] == 'CONF' and game['completed'] == False and game['homeTeamId'] == response['teamID']:
+                conferenceGames.append(
+                    {
+                        'homeTeamId': response['teamID'],
+                        'awayTeamId': game['opponentId'],
+                        'proobability': game['winProbability']
+                    }
+                )
+    return conferenceGames, standings
+
+def get_random_number():
+    return random.random()
+
+
+def simulate_standings(conferenceGames, standings):
+    for game in conferenceGames:
+        if game['proobability'] > get_random_number():
+            standings[game['homeTeamId']]['confWin'] += 1
+            standings[game['awayTeamId']]['confLoss'] += 1
+        else:
+            standings[game['homeTeamId']]['confLoss'] += 1
+            standings[game['awayTeamId']]['confWin'] += 1
+    return standings
+
+def order_standings(standings):
+    orderedStandings = []
+    for team in standings:
+        orderedStandings.append(
+            {
+            'teamID': team,
+            'confWin': standings[team]['confWin'],
+            'confLoss': standings[team]['confLoss'],
+            'randomFactor': random.random()  # Add a random factor for each team
+        }
+        )
+    orderedStandings.sort(key=lambda x: (x['confWin'], x['randomFactor']), reverse=True)
+    return orderedStandings
+
+
+def get_simulated_standings(conference):
+    teams = {}
+    n = 1000
+    conferenceGames, standings = get_standings_games(conference)
+    for i in range(n):
+        standingsCopy = copy.deepcopy(standings)
+        newStandings = simulate_standings(conferenceGames, standingsCopy)
+        orderedStandings = order_standings(newStandings)
+        for count,team in enumerate(orderedStandings):
+            if team['teamID'] not in teams:
+                teams[team['teamID']] = {}
+                for i in range(1,len(orderedStandings)+1):
+                    teams[team['teamID']][i] = 0    
+            teams[team['teamID']][count + 1] += 1
+
+    for team in teams:
+        for place in teams[team]:
+            teams[team][place] = round(teams[team][place] / n * 100,2)
+    return teams
+
+def get_all_unique_conferences():
+    response = call_team_data()
+    conferences = []
+    for team in response:
+        if team['conference'] not in conferences and team['conference'] != "IND":
+            conferences.append(team['conference'])
+    return conferences
+
+def get_conference_standings_odds():
+    conferenceStandingsMap = {}
+    conferences = get_all_unique_conferences()
+    for conference in conferences:
+        print(conference)
+        conferenceStandingsMap[conference] = get_simulated_standings(conference)
+    return conferenceStandingsMap

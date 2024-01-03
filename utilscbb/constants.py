@@ -33,3 +33,4 @@ conferenceMap = {
     "MEAC": "MEAC",
     "ind": "IND"
 }
+appSyncURL = "https://5pb6ihqy4zbe7gftm4uw6nojci.appsync-api.us-east-2.amazonaws.com/graphql"

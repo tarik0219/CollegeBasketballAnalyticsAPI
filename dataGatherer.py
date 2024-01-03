@@ -10,6 +10,7 @@ from dataGatherer.record import schedule
 from dataGatherer.espn.getOdds import get_odds_by_date
 from utilscbb.constants import conferenceMap
 from constants import constants
+from dataGatherer.conferenceStandings import conferenceStandings
 
 
 # Ignore all warnings
@@ -26,9 +27,11 @@ previous_date = previous_date.strftime("%Y%m%d")
 try:
     query,teamsTable = db.get_db()
     cacheQuery,cacheTable = db.get_cache()
+    standingsQuery,standingsTable = db.get_cs()
 except:
     query,teamsTable = db.get_db_pa()
     cacheQuery,cacheTable = db.get_cache_pa()
+    standingsQuery,standingsTable = db.get_cs_pa()
 
 print('Getting Kenpom Data')
 kenpomTeams = kenpom.UpdateKenpom()
@@ -50,7 +53,7 @@ for team in kenpomTeams:
         if bool(team):
             print(team)
         pass
-print('Updated Kenpom Data')
+print('Kenpom Data Updated')
 
 #Update Bart Stats
 print('Updating Barttorvik Data in DB')
@@ -61,7 +64,7 @@ for team in barttorvikTeams:
         if bool(team):
             print(team)
         pass
-print('Updated Bart Data')
+print('Bart Data Updated')
 
 #calculate averages
 try:
@@ -75,7 +78,7 @@ except Exception as e:
 print("Calculating Records")
 try:
     schedule.add_records_teams(constants.year,teamsTable,query)
-    print("Calculated Records")
+    print("Records Calculated")
 except Exception as e:
     print("Unable to calculate records Error: ", e)
 
@@ -85,8 +88,19 @@ try:
     todayDate = datetime.datetime.now().strftime("%Y%m%d")
     oddsResponseMap, oddsResponseList = get_odds_by_date(todayDate)
     cacheTable.insert_multiple(oddsResponseList)
+    print("Calculated Odds")
 except Exception as e:
     print("Unable to add odds:", e)
 
 
     
+#Update Conference Standings
+print("Updating Conference Standings")
+try:
+    standings = conferenceStandings.get_conference_standings_odds()
+    for key,team in standings.items():
+        team['conference'] = key
+        standingsTable.upsert(team, standingsQuery.conference == key)
+    print("Conference Standings Updated")
+except Exception as e:
+    print("Unable to update conference standings:", e)

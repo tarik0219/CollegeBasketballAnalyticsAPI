@@ -9,6 +9,9 @@ pafile = os.path.join(os.getcwd(), constants.paFileName)
 cacheFile = os.path.join(os.getcwd(), constants.cacheFileName)
 paCacheFile = os.path.join(os.getcwd(), constants.paCacheFileName)
 
+csFile = os.path.join(os.getcwd(), constants.csFileName)
+paCsFile = os.path.join(os.getcwd(), constants.paCsFileName)
+
 def get_db():
     db = TinyDB(dbfile)
     query = Query()
@@ -32,4 +35,16 @@ def get_cache_pa():
     db = TinyDB(paCacheFile)
     query = Query()
     cacheTable = db.table('cache')
+    return query,cacheTable
+
+def get_cs():
+    db = TinyDB(csFile)
+    query = Query()
+    cacheTable = db.table('cs')
+    return query,cacheTable
+
+def get_cs_pa():
+    db = TinyDB(paCsFile)
+    query = Query()
+    cacheTable = db.table('cs')
     return query,cacheTable
