@@ -8,6 +8,7 @@ import datetime
 import warnings
 from dataGatherer.record import schedule
 from dataGatherer.espn.getOdds import get_odds_by_date
+from utilscbb.constants import conferenceMap
 from constants import constants
 
 
@@ -44,6 +45,7 @@ print('Updating Kenpom Data in DB')
 for team in kenpomTeams:
     try:
         teamsTable.update(set("kenpom", team), query.id == team['id'])
+        teamsTable.update(set("conference", conferenceMap[team['conference']]), query.id == team['id'])
     except:
         if bool(team):
             print(team)
@@ -80,11 +82,11 @@ except Exception as e:
 #Add Odds
 print("Adding Odds")
 try:
-    todayDate = datetime.now().strftime("%Y%m%d")
+    todayDate = datetime.datetime.now().strftime("%Y%m%d")
     oddsResponseMap, oddsResponseList = get_odds_by_date(todayDate)
     cacheTable.insert_multiple(oddsResponseList)
-except:
-    print("Unable to add odds")
+except Exception as e:
+    print("Unable to add odds:", e)
 
 
     

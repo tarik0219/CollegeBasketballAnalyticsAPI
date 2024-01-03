@@ -11374,6 +11374,246 @@
             "gameID": "401606629",
             "spread": -3.5,
             "overUnder": 157.5
+        },
+        "2276": {
+            "gameID": "401587190",
+            "spread": 8.5,
+            "overUnder": 144.5
+        },
+        "2277": {
+            "gameID": "401601216",
+            "spread": -9.5,
+            "overUnder": 142.5
+        },
+        "2278": {
+            "gameID": "401599472",
+            "spread": -6.5,
+            "overUnder": 135.5
+        },
+        "2279": {
+            "gameID": "401601215",
+            "spread": -2.5,
+            "overUnder": 141.5
+        },
+        "2280": {
+            "gameID": "401596819",
+            "spread": 3.5,
+            "overUnder": 139.5
+        },
+        "2281": {
+            "gameID": "401604269",
+            "spread": -2.5,
+            "overUnder": 123.5
+        },
+        "2282": {
+            "gameID": "401604105",
+            "spread": -16.5,
+            "overUnder": 127.5
+        },
+        "2283": {
+            "gameID": "401604102",
+            "spread": -4.5,
+            "overUnder": 143.5
+        },
+        "2284": {
+            "gameID": "401601825",
+            "spread": -14.5,
+            "overUnder": 158.5
+        },
+        "2285": {
+            "gameID": "401601214",
+            "spread": -1.5,
+            "overUnder": 142.5
+        },
+        "2286": {
+            "gameID": "401601213",
+            "spread": 1.5,
+            "overUnder": 141.5
+        },
+        "2287": {
+            "gameID": "401600310",
+            "spread": -8.5,
+            "overUnder": 134.5
+        },
+        "2288": {
+            "gameID": "401600246",
+            "spread": -19.5,
+            "overUnder": 135.5
+        },
+        "2289": {
+            "gameID": "401597966",
+            "spread": -2.5,
+            "overUnder": 129.5
+        },
+        "2290": {
+            "gameID": "401597384",
+            "spread": -1.5,
+            "overUnder": 144.5
+        },
+        "2291": {
+            "gameID": "401596821",
+            "spread": 4.5,
+            "overUnder": 136.5
+        },
+        "2292": {
+            "gameID": "401596820",
+            "spread": -3.5,
+            "overUnder": 149.5
+        },
+        "2293": {
+            "gameID": "401596818",
+            "spread": -1.5,
+            "overUnder": 155.5
+        },
+        "2294": {
+            "gameID": "401596817",
+            "spread": 5.5,
+            "overUnder": 147.5
+        },
+        "2295": {
+            "gameID": "401596816",
+            "spread": -2.5,
+            "overUnder": 142.5
+        },
+        "2296": {
+            "gameID": "401594508",
+            "spread": -12.5,
+            "overUnder": 135.5
+        },
+        "2297": {
+            "gameID": "401594485",
+            "spread": -5.5,
+            "overUnder": 131.5
+        },
+        "2298": {
+            "gameID": "401587893",
+            "spread": 2.5,
+            "overUnder": 138.5
+        },
+        "2299": {
+            "gameID": "401587892",
+            "spread": -2.5,
+            "overUnder": 151.5
+        },
+        "2300": {
+            "gameID": "401587891",
+            "spread": -15.5,
+            "overUnder": 152.5
+        },
+        "2301": {
+            "gameID": "401587890",
+            "spread": -4.5,
+            "overUnder": 135.5
+        },
+        "2302": {
+            "gameID": "401587889",
+            "spread": -7.5,
+            "overUnder": 160.5
+        },
+        "2303": {
+            "gameID": "401581688",
+            "spread": 5.5,
+            "overUnder": 146.5
+        },
+        "2304": {
+            "gameID": "401604103",
+            "spread": 1.5,
+            "overUnder": 155.5
+        },
+        "2305": {
+            "gameID": "401601824",
+            "spread": 10.5,
+            "overUnder": 135.5
+        },
+        "2306": {
+            "gameID": "401598001",
+            "spread": 1.5,
+            "overUnder": 141.5
+        },
+        "2307": {
+            "gameID": "401594019",
+            "spread": -1.5,
+            "overUnder": 150.5
+        },
+        "2308": {
+            "gameID": "401581822",
+            "spread": -3.5,
+            "overUnder": 145.5
+        },
+        "2309": {
+            "gameID": "401580031",
+            "spread": 6.5,
+            "overUnder": 153.5
+        },
+        "2310": {
+            "gameID": "401599473",
+            "spread": -8.5,
+            "overUnder": 140.5
+        },
+        "2311": {
+            "gameID": "401607363",
+            "spread": -4.5,
+            "overUnder": 137.5
+        },
+        "2312": {
+            "gameID": "401604104",
+            "spread": 4.5,
+            "overUnder": 137.5
+        },
+        "2313": {
+            "gameID": "401602058",
+            "spread": -8.5,
+            "overUnder": 161.5
+        },
+        "2314": {
+            "gameID": "401601826",
+            "spread": -2.5,
+            "overUnder": 142.5
+        },
+        "2315": {
+            "gameID": "401600309",
+            "spread": -5.5,
+            "overUnder": 149.5
+        },
+        "2316": {
+            "gameID": "401596815",
+            "spread": -5.5,
+            "overUnder": 139.5
+        },
+        "2317": {
+            "gameID": "401580032",
+            "spread": -1.5,
+            "overUnder": 136.5
+        },
+        "2318": {
+            "gameID": "401580030",
+            "spread": 4.5,
+            "overUnder": 132.5
+        },
+        "2319": {
+            "gameID": "401580029",
+            "spread": -4.5,
+            "overUnder": 141.5
+        },
+        "2320": {
+            "gameID": "401594599",
+            "spread": -8.5,
+            "overUnder": 150.5
+        },
+        "2321": {
+            "gameID": "401580028",
+            "spread": -1.5,
+            "overUnder": 144.5
+        },
+        "2322": {
+            "gameID": "401607364",
+            "spread": -6.5,
+            "overUnder": 151.5
+        },
+        "2323": {
+            "gameID": "401597935",
+            "spread": -15.5,
+            "overUnder": 137.5
         }
     }
 }
