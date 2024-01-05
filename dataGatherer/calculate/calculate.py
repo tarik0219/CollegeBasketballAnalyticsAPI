@@ -1,10 +1,7 @@
-from typing import ItemsView
 import requests
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from tinydb import TinyDB, Query
-from tinydb.operations import set
 from net import net
 
 
@@ -16,9 +13,8 @@ def calc_average(stat, statNames, data):
         count += 1
     return sum/count
 
-def addAverage(query,teamsTable):
-    data = teamsTable.all()
-    for team in data:
+def addAverage(data):
+    for count,team in enumerate(data):
         team['average'] = {
             "offRating":calc_average('offRating', ["barttorvik","kenpom"], team),
             "defRating":calc_average('defRating', ["barttorvik","kenpom"], team),
@@ -35,16 +31,17 @@ def addAverage(query,teamsTable):
             "net_rank": netRanking,
             "ap_rank": apRank,
         }
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
-def addStatRank(query,teamsTable):
-    data = teamsTable.all()
+def addStatRank(data):
     data.sort(key=lambda x: x["barttorvik"]["offRating"] - x["barttorvik"]["defRating"] + x["kenpom"]["offRating"] - x["barttorvik"]["defRating"], reverse=True)
     for count,team in enumerate(data):
         team['ranks']['stat_rank'] = count + 1
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
-def addApRank(query,teamsTable):
+def addApRank(data):
     url = "https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/rankings"
     payload={}
     headers = {}
@@ -60,7 +57,6 @@ def addApRank(query,teamsTable):
     for count,team in enumerate(others):
         ap_ranks[team['team']['id']] = count + 26
 
-    data = teamsTable.all()
     length_rank = len(ap_ranks)
     for count,team in enumerate(data):
         if team['id'] in ap_ranks:
@@ -70,65 +66,78 @@ def addApRank(query,teamsTable):
                 team['ranks']['ap_rank'] = length_rank + 1
             else:
                 team['ranks']['ap_rank'] = team['ranks']['stat_rank']
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
-def addNetRank(query,teamsTable):
+def addNetRank(data):
     try:
         netRanks = net.net_rankings_to_dict()
+        dataMap = {}
+        for team in data:
+            dataMap[team['id']] = team
+
         for teamId,rank in netRanks.items():
             try:
-                teamData = teamsTable.search(query.id == teamId)[0]
+                teamData = dataMap[teamId]
                 teamData['ranks']["net_rank"] = rank
-                teamsTable.upsert(teamData, query.id == teamId)
+                dataMap[teamId] = teamData
             except Exception as e:
                 print("Unable to calculate Net Rankings for team: ", e, "TeamId: ", teamId)
                 pass
+        data = list(dataMap.values())
+        return data
     except Exception as e:
         print("Unable to calculate Net Rankings Error: ", e)
+        return data
 
-def addRank(query,teamsTable):
-    data = teamsTable.all()
+def addRank(data):
     data.sort(key=lambda x: x['ranks']["stat_rank"] * .25  + x['ranks']["ap_rank"] * .50 +x['ranks']["net_rank"] * .25, reverse=False)
     for count,team in enumerate(data):
         team['ranks']['rank'] = count + 1
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
-def addOff(query,teamsTable):
-    data = teamsTable.all()
+def addOff(data):
     data.sort(key=lambda x: x["barttorvik"]["offRating"]  + x["kenpom"]["offRating"] , reverse=True)
     for count,team in enumerate(data):
         team['ranks']['rankOff'] = count + 1
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
-def addDef(query,teamsTable):
-    data = teamsTable.all()
+def addDef(data):
     data.sort(key=lambda x: x["barttorvik"]["defRating"]  + x["kenpom"]["defRating"] , reverse=False)
     for count,team in enumerate(data):
         team['ranks']['rankDef'] = count + 1
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
-def addTempo(query,teamsTable):
-    data = teamsTable.all()
+def addTempo(data):
     data.sort(key=lambda x: x["barttorvik"]["TempoRating"]  + x["kenpom"]["TempoRating"] , reverse=True)
     for count,team in enumerate(data):
         team['ranks']['rankTempo'] = count + 1
-        teamsTable.upsert(team, query.id == team['id'])
+        data[count] = team
+    return data
 
 def updateStats(query,teamsTable):
+    data = teamsTable.all()
     print('Calculating Average')
-    addAverage(query,teamsTable)
+    data = addAverage(data)
     print('Calculating Stats Rank')
-    addStatRank(query,teamsTable)
+    data = addStatRank(data)
     print('Calculating Net Rank')
-    addNetRank(query,teamsTable)
+    data = addNetRank(data)
     print('Calculating AP Rank')
-    addApRank(query,teamsTable)
+    data = addApRank(data)
     print('Calculating Average Rank')
-    addRank(query,teamsTable)
+    data = addRank(data)
     print('Calculating OFF Rank')
-    addOff(query,teamsTable)
+    data = addOff(data)
     print('Calculating DEF Rank')
-    addDef(query,teamsTable)
+    data = addDef(data)
     print('Calculating TEMPO Rank')
-    addTempo(query,teamsTable)
+    data = addTempo(data)
     print('Done Caclculating')
+    send = []
+    for team in data:
+        send.append((team, query.id == team['id']))
+    teamsTable.update_multiple(send)

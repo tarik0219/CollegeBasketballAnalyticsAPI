@@ -45,30 +45,36 @@ print('Retrieved Barttorvik Data')
 
 #Update Kenpom Stats
 print('Updating Kenpom Data in DB')
+send = []
 for team in kenpomTeams:
     try:
-        teamsTable.update(set("kenpom", team), query.id == team['id'])
-        teamsTable.update(set("conference", conferenceMap[team['conference']]), query.id == team['id'])
+        send.append((set("kenpom", team), query.id == team['id']))
     except:
         if bool(team):
             print(team)
-        pass
+teamsTable.update_multiple(send)
 print('Kenpom Data Updated')
 
 #Update Bart Stats
 print('Updating Barttorvik Data in DB')
+send = []
 for team in barttorvikTeams:
     try:
-        teamsTable.update(set("barttorvik", team), query.id == team['id'])
-    except:
+        send.append((set("barttorvik", team), query.id == team['id']))
+    except Exception as e:
+        print(e)
         if bool(team):
             print(team)
-        pass
+teamsTable.update_multiple(send)
 print('Bart Data Updated')
 
+
+#Update Stats
+print('Updating Stats')
 #calculate averages
 try:
     calculate.updateStats(query,teamsTable)
+    print("Stats Calculated")
 except Exception as e:
     print("Unable to calculate Stats Error: ", e)
 
@@ -81,6 +87,7 @@ try:
     print("Records Calculated")
 except Exception as e:
     print("Unable to calculate records Error: ", e)
+
 
 #Add Odds
 print("Adding Odds")
@@ -98,9 +105,11 @@ except Exception as e:
 print("Updating Conference Standings")
 try:
     standings = conferenceStandings.get_conference_standings_odds()
+    send = []
     for key,team in standings.items():
         team['conference'] = key
-        standingsTable.upsert(team, standingsQuery.conference == key)
+        send.append((team, standingsQuery.conference == key))
+    standingsTable.update_multiple(send)
     print("Conference Standings Updated")
 except Exception as e:
     print("Unable to update conference standings:", e)
