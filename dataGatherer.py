@@ -83,7 +83,7 @@ except Exception as e:
 #calculate records
 print("Calculating Records")
 try:
-    schedule.add_records_teams(constants.year,teamsTable,query)
+    schedule.add_records_teams(teamsTable, query)
     print("Records Calculated")
 except Exception as e:
     print("Unable to calculate records Error: ", e)
