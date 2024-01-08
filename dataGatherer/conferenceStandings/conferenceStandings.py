@@ -4,6 +4,7 @@ from gql.transport.aiohttp import AIOHTTPTransport
 import random
 import copy
 from utilscbb.config import apiKey
+import concurrent.futures
 
 def call_team_data():
     url = "https://koric2.pythonanywhere.com/teamData"
@@ -47,10 +48,9 @@ def get_schedule_data(teamID, year, netRank):
     result = client.execute(query, variable_values=params)
     return result
 
-def get_standings_games(conference):
-    response = call_team_data()
+def get_standings_games(conference, teamData):
     teamIds = []
-    for team in response:
+    for team in teamData:
         if team['conference'] == conference:
             teamIds.append(team['id'])
 
@@ -99,10 +99,11 @@ def order_standings(standings):
     return orderedStandings
 
 
-def get_simulated_standings(conference):
+def get_simulated_standings(conference, teamData):
+    print(conference)
     teams = {}
     n = 1000
-    conferenceGames, standings = get_standings_games(conference)
+    conferenceGames, standings = get_standings_games(conference, teamData)
     for i in range(n):
         standingsCopy = copy.deepcopy(standings)
         newStandings = simulate_standings(conferenceGames, standingsCopy)
@@ -125,12 +126,19 @@ def get_all_unique_conferences():
     for team in response:
         if team['conference'] not in conferences and team['conference'] != "IND":
             conferences.append(team['conference'])
-    return conferences
+    return conferences, response
+
+
 
 def get_conference_standings_odds():
     conferenceStandingsMap = {}
-    conferences = get_all_unique_conferences()
-    for conference in conferences:
-        print(conference)
-        conferenceStandingsMap[conference] = get_simulated_standings(conference)
+    conferences, teamData = get_all_unique_conferences()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        future_to_url = {executor.submit(get_simulated_standings, conference, teamData): conference for conference in conferences}
+        for future in concurrent.futures.as_completed(future_to_url):
+            conferenceData = future_to_url[future]
+            try:
+                conferenceStandingsMap[conferenceData] = future.result()
+            except Exception as exc:
+                print('error running concurrently: ' + str(exc))    
     return conferenceStandingsMap

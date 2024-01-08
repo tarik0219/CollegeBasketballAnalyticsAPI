@@ -1,7 +1,9 @@
 from tinydb import TinyDB, Query
+from tinydb.storages import Storage
 from constants import constants
 import os
-
+import boto3
+import json
 
 dbfile = os.path.join(os.getcwd(), constants.dbFileName)
 pafile = os.path.join(os.getcwd(), constants.paFileName)
@@ -48,3 +50,45 @@ def get_cs_pa():
     query = Query()
     cacheTable = db.table('cs')
     return query,cacheTable
+
+
+
+
+
+class S3Storage(Storage):
+    def __init__(self, bucket, file):
+        self.bucket = bucket
+        self.file = file
+        self.client = boto3.resource('s3', aws_access_key_id="AKIA4T7C2Z5R3CXUYJDH", aws_secret_access_key="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")
+
+
+    def read(self):
+        obj = self.client.Object(self.bucket, self.file)
+        data = obj.get()
+
+        return json.loads(data['Body'].read())
+
+    def write(self, data):
+        self.client.Object(self.bucket, self.file).put(Body=json.dumps(data))
+
+
+    def close(self):
+        pass
+
+def get_db_s3():
+    db = TinyDB(bucket='cbbwebdb', file='cbbweb.json', storage=S3Storage)
+    query = Query()
+    teamsTable = db.table('teams')
+    return query,teamsTable
+
+def get_cache_s3():
+    db = TinyDB(bucket='cbbwebdb', file='oddsCache.json', storage=S3Storage)
+    query = Query()
+    cacheTable = db.table('cache')
+    return query,cacheTable
+
+def get_cs_s3():
+    db = TinyDB(bucket='cbbwebdb', file='conferenceStandings.json', storage=S3Storage)
+    query = Query()
+    cacheTable = db.table('cs')
+    return query,cacheTable 

@@ -160,5 +160,5 @@ cython_debug/
 #.idea/
 utilscbb/config.py
 data/cbbweb.json
-data/cbbweb.json
 data/oddsCache.json
+data/conferenceStandings.json
