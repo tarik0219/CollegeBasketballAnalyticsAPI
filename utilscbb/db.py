@@ -59,19 +59,14 @@ class S3Storage(Storage):
     def __init__(self, bucket, file):
         self.bucket = bucket
         self.file = file
-        self.client = boto3.resource('s3', aws_access_key_id="AKIA4T7C2Z5R3CXUYJDH", aws_secret_access_key="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")
-
-
+        self.client = boto3.resource('s3', aws_access_key_id="", aws_secret_access_key="")
     def read(self):
         obj = self.client.Object(self.bucket, self.file)
         data = obj.get()
 
         return json.loads(data['Body'].read())
-
     def write(self, data):
         self.client.Object(self.bucket, self.file).put(Body=json.dumps(data))
-
-
     def close(self):
         pass
 
