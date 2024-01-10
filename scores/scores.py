@@ -5,6 +5,7 @@ from datetime import datetime
 from dateutil import tz
 from utilscbb.db import get_db, get_cache
 from utilscbb.predict import make_prediction_api
+import time
 
 
 def convertDateTime(dateTime):
@@ -109,18 +110,34 @@ def add_line_data(query, oddsTable, gameID):
 
 
 def get_scores_data(date):
+    start = time.time()
     espnScores = get_scores(date)
+    end = time.time()
+    print(f"ESPN Scores: {end-start}")
     query,teamsTable = get_db()
     oddsQuery,oddsTable = get_cache()
     espnScoresList = []
+
+    teamDataTimes = []
+    predictionTimes = []
+    oddsTimes = []
     for gameId,game in espnScores.items():
+        start = time.time()
         homeData = get_team_data(game['homeTeamId'], query, teamsTable)
         awayData = get_team_data(game['awayTeamId'], query, teamsTable)
+        end = time.time()
+        teamDataTimes.append(end-start)
+        start = time.time()
         if game['status'] == 'post':
             homeScore, awayScore, prob = None, None, None
         else:
             homeScore,awayScore,prob = get_prediction(homeData, awayData, game['siteType'])
+        end = time.time()
+        predictionTimes.append(end-start)
+        start = time.time()
         odds = add_line_data(oddsQuery, oddsTable, gameId)
+        end = time.time()
+        oddsTimes.append(end-start)
         game.update({
             "homeData": get_team_data(game['homeTeamId'], query, teamsTable),
             "awayData": get_team_data(game['awayTeamId'], query, teamsTable),
@@ -131,6 +148,9 @@ def get_scores_data(date):
             "overUnder": odds['overUnder']
         })
         espnScoresList.append(game)
+    print(f"Team Data: {sum(teamDataTimes)}")
+    print(f"Prediction: {sum(predictionTimes)}")
+    print(f"Odds: {sum(oddsTimes)}")
     return  espnScoresList
 
 
