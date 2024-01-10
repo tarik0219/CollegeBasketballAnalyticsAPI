@@ -87,11 +87,9 @@ def get_scores(date):
     return espnScores
 
 
-def get_team_data(teamID, query, teamsTable):
-    query,teamsTable = get_db()
-    team = teamsTable.search(query.id == teamID)
-    if len(team) > 0:
-        return team[0]
+def get_team_data(teamID, teamsData):
+    if teamID in teamsData:
+        return teamsData[teamID]
     else:
         return {}
 
@@ -109,12 +107,22 @@ def add_line_data(query, oddsTable, gameID):
         return {"spread": None, "overUnder": None}
 
 
+def get_teams_data_dict(query, teamsTable):
+    teamsData = teamsTable.all()
+    teamsDataDict = {}
+    for team in teamsData:
+        teamsDataDict[team['id']] = team
+    return teamsDataDict
+
+
 def get_scores_data(date):
     start = time.time()
     espnScores = get_scores(date)
     end = time.time()
     print(f"ESPN Scores: {end-start}")
     query,teamsTable = get_db()
+    teamsData = get_teams_data_dict(query, teamsTable)
+    
     oddsQuery,oddsTable = get_cache()
     espnScoresList = []
 
@@ -123,8 +131,8 @@ def get_scores_data(date):
     oddsTimes = []
     for gameId,game in espnScores.items():
         start = time.time()
-        homeData = get_team_data(game['homeTeamId'], query, teamsTable)
-        awayData = get_team_data(game['awayTeamId'], query, teamsTable)
+        homeData = get_team_data(game['homeTeamId'], teamsData)
+        awayData = get_team_data(game['awayTeamId'], teamsData)
         end = time.time()
         teamDataTimes.append(end-start)
         start = time.time()
@@ -139,8 +147,8 @@ def get_scores_data(date):
         end = time.time()
         oddsTimes.append(end-start)
         game.update({
-            "homeData": get_team_data(game['homeTeamId'], query, teamsTable),
-            "awayData": get_team_data(game['awayTeamId'], query, teamsTable),
+            "homeData": homeData,
+            "awayData": awayData,
             "homeScorePredict": homeScore,
             "awayScorePredict": awayScore,
             "prob": prob,
