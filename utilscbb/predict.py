@@ -1,6 +1,10 @@
 import pickle
 import numpy as np
 import os
+def warn(*args, **kwargs):
+    pass
+import warnings
+warnings.warn = warn
 
 scoresFile = os.path.join(os.getcwd(), "models/scores.pkl")
 probFile = os.path.join(os.getcwd(), "models/prob.pkl")

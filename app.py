@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from utilscbb.db import get_db, get_cache, get_cs
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
+from scores.scores import get_scores_data
 app = Flask(__name__)
 
 
@@ -88,6 +89,10 @@ def get_conference_standings(conference):
         return jsonify(standings)
     else:
         return jsonify({"error":"Conference not found"}), 404
+
+@app.route('/scores/<date>', methods=['GET'])
+def get_scores(date):
+    return jsonify({"scores": get_scores_data(date)})
 
 
 if __name__ == '__main__':
