@@ -107,8 +107,7 @@ def add_line_data(oddsData, gameID):
         return {"spread": None, "overUnder": None}
                 
 
-
-def get_teams_data_dict(query, teamsTable):
+def get_teams_data_dict(teamsTable):
     teamsData = teamsTable.all()
     teamsDataDict = {}
     for team in teamsData:
@@ -124,45 +123,20 @@ def get_odds_data_dict(query, oddsTable, espnScores):
     return oddsDataDict
 
 def get_scores_data(date):
-    start = time.time()
     espnScores = get_scores(date)
-    end = time.time()
-    print(f"ESPN Scores: {end-start}")
-
-    start = time.time()
     query,teamsTable = get_db()
-    teamsData = get_teams_data_dict(query, teamsTable)
-    end = time.time()
-    print(f"Teams Data: {end-start}")
-    
-    start = time.time()
+    teamsData = get_teams_data_dict(teamsTable)
+    espnScoresList = []
     oddsQuery,oddsTable = get_cache()
     oddsData = get_odds_data_dict(oddsQuery, oddsTable, espnScores)
-    end = time.time()
-    print(f"Odds Data: {end-start}")
-
-    espnScoresList = []
-
-    teamDataTimes = []
-    predictionTimes = []
-    oddsTimes = []
     for gameId,game in espnScores.items():
-        start = time.time()
         homeData = get_team_data(game['homeTeamId'], teamsData)
         awayData = get_team_data(game['awayTeamId'], teamsData)
-        end = time.time()
-        teamDataTimes.append(end-start)
-        start = time.time()
         if game['status'] == 'post':
             homeScore, awayScore, prob = None, None, None
         else:
             homeScore,awayScore,prob = get_prediction(homeData, awayData, game['siteType'])
-        end = time.time()
-        predictionTimes.append(end-start)
-        start = time.time()
         odds = add_line_data(oddsData, gameId)
-        end = time.time()
-        oddsTimes.append(end-start)
         game.update({
             "homeData": homeData,
             "awayData": awayData,
@@ -173,9 +147,6 @@ def get_scores_data(date):
             "overUnder": odds['overUnder']
         })
         espnScoresList.append(game)
-    print(f"Team Data: {sum(teamDataTimes)}")
-    print(f"Prediction: {sum(predictionTimes)}")
-    print(f"Odds: {sum(oddsTimes)}")
     return  espnScoresList
 
 
