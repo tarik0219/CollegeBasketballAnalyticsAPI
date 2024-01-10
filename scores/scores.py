@@ -99,12 +99,13 @@ def get_prediction(homeData, awayData, neutralSite):
     homeScore,awayScore,prob = make_prediction_api(homeData['average'], awayData['average'], neutralSite)
     return homeScore,awayScore,prob
 
-def add_line_data(query, oddsTable, gameID):
-    odds = oddsTable.search(query.gameID == gameID)
-    if len(odds) > 0:
-        return odds[0]
+def add_line_data(oddsData, gameID):
+    if gameID in oddsData:
+        game = oddsData[gameID]
+        return game
     else:
         return {"spread": None, "overUnder": None}
+                
 
 
 def get_teams_data_dict(query, teamsTable):
@@ -114,16 +115,32 @@ def get_teams_data_dict(query, teamsTable):
         teamsDataDict[team['id']] = team
     return teamsDataDict
 
+def get_odds_data_dict(query, oddsTable, espnScores):
+    gameIds = list(espnScores.keys())
+    oddsData = oddsTable.search(query.gameID.one_of(gameIds))
+    oddsDataDict = {}
+    for game in oddsData:
+        oddsDataDict[game['gameID']] = game
+    return oddsDataDict
 
 def get_scores_data(date):
     start = time.time()
     espnScores = get_scores(date)
     end = time.time()
     print(f"ESPN Scores: {end-start}")
+
+    start = time.time()
     query,teamsTable = get_db()
     teamsData = get_teams_data_dict(query, teamsTable)
+    end = time.time()
+    print(f"Teams Data: {end-start}")
     
+    start = time.time()
     oddsQuery,oddsTable = get_cache()
+    oddsData = get_odds_data_dict(oddsQuery, oddsTable, espnScores)
+    end = time.time()
+    print(f"Odds Data: {end-start}")
+
     espnScoresList = []
 
     teamDataTimes = []
@@ -143,7 +160,7 @@ def get_scores_data(date):
         end = time.time()
         predictionTimes.append(end-start)
         start = time.time()
-        odds = add_line_data(oddsQuery, oddsTable, gameId)
+        odds = add_line_data(oddsData, gameId)
         end = time.time()
         oddsTimes.append(end-start)
         game.update({
