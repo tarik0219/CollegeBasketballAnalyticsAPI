@@ -3,6 +3,7 @@ from utilscbb.db import get_db, get_cache, get_cs
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 from scores.scores import get_scores_data
+from utilscbb.schedule import get_team_schedule
 app = Flask(__name__)
 
 
@@ -94,6 +95,12 @@ def get_conference_standings(conference):
 def get_scores(date):
     return jsonify({"scores": get_scores_data(date)})
 
+
+@app.route('/teamSchedule', methods=['POST'])
+def get_schedule():
+    requestData = request.get_json()
+    data = get_team_schedule(requestData['teamID'],requestData['year'],requestData['netRankBool'])
+    return jsonify(data)
 
 if __name__ == '__main__':
     app.run() 

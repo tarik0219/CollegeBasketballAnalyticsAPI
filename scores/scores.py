@@ -106,7 +106,6 @@ def add_line_data(oddsData, gameID):
     else:
         return {"spread": None, "overUnder": None}
                 
-
 def get_teams_data_dict(teamsTable):
     teamsData = teamsTable.all()
     teamsDataDict = {}
