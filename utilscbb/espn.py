@@ -38,6 +38,7 @@ def call_espn_schedule_api(teamID, year):
             gameData = {}
             competitionData = game['competitions'][0]
             gameData['date'], gameData['time'] = convertDateTime(game["date"])
+            gameData['dateString'] = gameData['date'].replace('-', '')
             gameData['gameId'] = game["id"]
             gameData['neutralSite'] = competitionData.get('neutralSite', False)
             gameData['gameType'] = "REG" if season_count == 2 else "POST"
