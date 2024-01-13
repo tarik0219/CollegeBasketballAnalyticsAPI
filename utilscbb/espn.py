@@ -34,7 +34,7 @@ def call_espn_team_standings_api(year):
         teamsData = conference['standings']['entries']
         for team in teamsData:
             teams[team['team']['id']] ={
-                "gamesBehind": team['stats'][2]['value'],
+                "gamesBehind": team['stats'][67]['value'],
                 "conferenceStanding": int(team['stats'][5]['value']),
                 "win": int(team['stats'][12]['displayValue'].split("-")[0]),
                 "loss": int(team['stats'][12]['displayValue'].split("-")[1]),
