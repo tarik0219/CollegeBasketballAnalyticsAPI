@@ -26,6 +26,22 @@ def get_venue(homeAway, neutralSite):
         return "Away"
 
 
+def call_espn_team_standings_api(year):
+    url = f"http://site.api.espn.com/apis/v2/sports/basketball/mens-college-basketball/standings?season={year}"
+    response = requests.request("GET", url).json()
+    teams = {}
+    for conference in response['children']:
+        teamsData = conference['standings']['entries']
+        for team in teamsData:
+            teams[team['team']['id']] ={
+                "gamesBehind": team['stats'][2]['value'],
+                "conferenceStanding": int(team['stats'][5]['value']),
+                "win": team['stats'][12]['displayValue'].split("-")[0],
+                "loss": team['stats'][12]['displayValue'].split("-")[1],
+                "confWin": team['stats'][77]['displayValue'].split("-")[0],
+                "confLoss": team['stats'][77]['displayValue'].split("-")[1]
+            }
+    return teams
 
 def call_espn_schedule_api(teamID, year):
     url = f'https://site.web.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/{teamID}/schedule'

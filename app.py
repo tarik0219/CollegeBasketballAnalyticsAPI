@@ -4,6 +4,8 @@ from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 from scores.scores import get_scores_data
 from utilscbb.schedule import get_team_schedule
+from constants.constants import year
+from utilscbb.espn import call_espn_team_standings_api
 app = Flask(__name__)
 
 
@@ -37,6 +39,11 @@ def get_team_data_by_name(teamName):
 def get_all_team_data():
     query,teamsTable = get_db()
     teams = teamsTable.all()
+    teamRecords = call_espn_team_standings_api(year)
+    for count,team in enumerate(teams):
+        team['record'].update(teamRecords[team['id']])
+        teams[count]['record'] = team['record']
+        break
     return jsonify(teams)
 
 #Predict Game
