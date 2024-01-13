@@ -8,3 +8,4 @@ csFileName = "data/conferenceStandings.json"
 paCsFileName = 'CollegeBasketballAnalyticsAPI/data/conferenceStandings.json'
 
 year = "2024"
+netRankBool = True

@@ -4,8 +4,9 @@ from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 from scores.scores import get_scores_data
 from utilscbb.schedule import get_team_schedule
-from constants.constants import year
+from constants.constants import year, netRankBool
 from utilscbb.espn import call_espn_team_standings_api
+from tinydb.operations import set
 app = Flask(__name__)
 
 
@@ -41,9 +42,17 @@ def get_all_team_data():
     teams = teamsTable.all()
     teamRecords = call_espn_team_standings_api(year)
     for count,team in enumerate(teams):
-        team['record'].update(teamRecords[team['id']])
-        teams[count]['record'] = team['record']
-        break
+        teamRecord = team['record']
+        newTeamRecord = teamRecords[team['id']]
+        if teamRecord['win'] + teamRecord['loss'] != newTeamRecord['win'] + newTeamRecord['loss']:
+            scheduleRecordData = get_team_schedule(team['id'],year, netRankBool)['records']
+            del scheduleRecordData["probs"]
+            teamsTable.update(set("record", scheduleRecordData),query.id == team['id'])
+            scheduleRecordData.update(newTeamRecord)
+            teams[count]['record'] = scheduleRecordData
+        else:
+            team['record'].update(newTeamRecord)
+            teams[count]['record'] = team['record']
     return jsonify(teams)
 
 #Predict Game
