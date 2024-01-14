@@ -103,7 +103,27 @@ def simulate(probs):
     confLoss = confGames - confWin
     return wins,loss,confWin,confLoss
 
-def calculate_records(data):
+
+def calculateATS(data, teamID):
+    spread = data['odds']['spread']
+    teamScoreSpread = int(data['score']) - int(data['opponentScore'])
+    if data['homeTeamId'] == teamID:
+        if teamScoreSpread > spread * -1:
+            return "W"
+        elif teamScoreSpread < spread * -1:
+            return "L"
+        else:
+            return "P"
+    else:
+        if teamScoreSpread > spread:
+            return "W"
+        elif teamScoreSpread < spread:
+            return "L"
+        else:
+            return "P"
+
+
+def calculate_records(data, teamID):
     records = {
         "win" : 0,
         "loss": 0,
@@ -112,11 +132,22 @@ def calculate_records(data):
         "confWin" : 0,
         "confLoss": 0,
         "confProjectedWin":0,
-        "confProjectedLoss":0
+        "confProjectedLoss":0,
+        "atsWin": 0,
+        "atsLoss": 0,
+        "atsPush": 0
     }
     probs = []
     for game in data:
         if game['completed']:
+            if game['odds']['spread']:
+                atsResult = calculateATS(game, teamID)
+                if atsResult == "W":
+                    records['atsWin'] += 1
+                elif atsResult == "L":
+                    records['atsLoss'] += 1
+                else:
+                    records['atsPush'] += 1
             if game['gameType'] == 'CONF':
                 if game['result'] == 'W':
                     records['win'] += 1
@@ -170,7 +201,7 @@ def get_team_schedule(teamID, year, netRankBool):
         espnResponse[count]['winProbability'] = prob
         espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'])
     espnResponse = add_odds(espnResponse)
-    records = calculate_records(espnResponse)
+    records = calculate_records(espnResponse, teamID)
     if netRankBool:
         quad_records = calculate_quad_record(espnResponse,'net_rank')
     else:
