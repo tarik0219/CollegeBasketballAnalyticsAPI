@@ -24,14 +24,14 @@ previous_date = current_date - datetime.timedelta(days=1)
 previous_date = previous_date.strftime("%Y%m%d")
 
 
-# try:
-#     query,teamsTable = db.get_db()
-#     cacheQuery,cacheTable = db.get_cache()
-#     standingsQuery,standingsTable = db.get_cs()
-# except:
-query,teamsTable = db.get_db_pa()
-cacheQuery,cacheTable = db.get_cache_pa()
-standingsQuery,standingsTable = db.get_cs_pa()
+try:
+    query,teamsTable = db.get_db()
+    cacheQuery,cacheTable = db.get_cache()
+    standingsQuery,standingsTable = db.get_cs()
+except:
+    query,teamsTable = db.get_db_pa()
+    cacheQuery,cacheTable = db.get_cache_pa()
+    standingsQuery,standingsTable = db.get_cs_pa()
 
 print('Getting Kenpom Data')
 kenpomTeams = kenpom.UpdateKenpom()

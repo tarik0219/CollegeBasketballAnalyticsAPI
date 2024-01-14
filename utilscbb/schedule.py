@@ -5,7 +5,7 @@ import pytz
 import json
 import sys, os
 from utilscbb.espn import call_espn_schedule_api
-from utilscbb.db import get_db, get_cache  
+from utilscbb.db import get_db, get_cache, get_db_pa, get_cache_pa
 from utilscbb.predict import make_prediction, make_prediction_api
 import time
 
@@ -47,7 +47,10 @@ def add_odds(espnResponse):
     for game in espnResponse:
         gameIDs.append(game['gameId'])
     
-    query, oddsTable = get_cache()
+    try:
+        query, oddsTable = get_cache()
+    except:
+        query, oddsTable = get_cache_pa()
     odds = oddsTable.search(query.gameID.one_of(gameIDs))
     oddsMap = {}
     for odd in odds:
@@ -172,7 +175,10 @@ def calculate_records(data, teamID):
 
 def get_team_schedule(teamID, year, netRankBool):
     espnResponse = call_espn_schedule_api(teamID, year)
-    query, teamsTable = get_db()
+    try:
+        query, teamsTable = get_db()
+    except:
+        query, teamsTable = get_db_pa()
     teamsData = teamsTable.all()
     teamsDict = team_data_to_dict(teamsData)
     teamData = teamsDict[teamID]
