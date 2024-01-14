@@ -5,6 +5,8 @@ import random
 import copy
 from utilscbb.config import apiKey
 import concurrent.futures
+from utilscbb.schedule import get_team_schedule
+from constants.constants import year, netRankBool
 
 def call_team_data():
     url = "https://koric2.pythonanywhere.com/teamData"
@@ -34,20 +36,6 @@ def get_schedule_query():
         """
     return stringQuery
 
-
-def get_schedule_data(teamID, year, netRank):
-    params = {
-        "teamID": teamID,
-        "year": year,
-        "netRank": netRank
-    }
-    appSyncURL = "https://5pb6ihqy4zbe7gftm4uw6nojci.appsync-api.us-east-2.amazonaws.com/graphql"
-    query = gql(get_schedule_query())
-    transport = AIOHTTPTransport(url=appSyncURL, headers={'x-api-key': apiKey})
-    client = Client(transport=transport)
-    result = client.execute(query, variable_values=params)
-    return result
-
 def get_standings_games(conference, teamData):
     teamIds = []
     for team in teamData:
@@ -57,7 +45,7 @@ def get_standings_games(conference, teamData):
     conferenceGames = []
     standings = {}
     for team in teamIds:
-        response = get_schedule_data(team,2024,True)['scheduleData']
+        response = get_team_schedule(team,year,netRankBool)
         standings[response['teamID']] = response['records']
         for game in response['games']:
             if game['gameType'] == 'CONF' and game['completed'] == False and game['homeTeamId'] == response['teamID']:
@@ -133,7 +121,7 @@ def get_all_unique_conferences():
 def get_conference_standings_odds():
     conferenceStandingsMap = {}
     conferences, teamData = get_all_unique_conferences()
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ThreadPoolExecutor() as executor:
         future_to_url = {executor.submit(get_simulated_standings, conference, teamData): conference for conference in conferences}
         for future in concurrent.futures.as_completed(future_to_url):
             conferenceData = future_to_url[future]
