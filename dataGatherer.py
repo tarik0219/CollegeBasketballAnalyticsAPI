@@ -33,70 +33,70 @@ except:
     cacheQuery,cacheTable = db.get_cache_pa()
     standingsQuery,standingsTable = db.get_cs_pa()
 
-# print('Getting Kenpom Data')
-# kenpomTeams = kenpom.UpdateKenpom()
-# print('Retrieved Kenpom Data')
+print('Getting Kenpom Data')
+kenpomTeams = kenpom.UpdateKenpom()
+print('Retrieved Kenpom Data')
 
-# print('Getting Barttorvik Data')
-# barttorvikTeams = barttorvik.UpdateBart()
-# print('Retrieved Barttorvik Data')
-
-
-
-# #Update Kenpom Stats
-# print('Updating Kenpom Data in DB')
-# send = []
-# for team in kenpomTeams:
-#     try:
-#         send.append((set("kenpom", team), query.id == team['id']))
-#     except:
-#         print(team)
-# teamsTable.update_multiple(send)
-# print('Kenpom Data Updated')
-
-# #Update Bart Stats
-# print('Updating Barttorvik Data in DB')
-# send = []
-# for team in barttorvikTeams:
-#     try:
-#         send.append((set("barttorvik", team), query.id == team['id']))
-#     except Exception as e:
-#         print(e)
-#         if bool(team):
-#             print(team)
-# teamsTable.update_multiple(send)
-# print('Bart Data Updated')
-
-
-# #Update Stats
-# print('Updating Stats')
-# #calculate averages
-# try:
-#     calculate.updateStats(query,teamsTable)
-#     print("Stats Calculated")
-# except Exception as e:
-#     print("Unable to calculate Stats Error: ", e)
+print('Getting Barttorvik Data')
+barttorvikTeams = barttorvik.UpdateBart()
+print('Retrieved Barttorvik Data')
 
 
 
-# #calculate records
-# print("Calculating Records")
-# try:
-#     schedule.add_records_teams(teamsTable, query)
-#     print("Records Calculated")
-# except Exception as e:
-#     print("Unable to calculate records Error: ", e)
+#Update Kenpom Stats
+print('Updating Kenpom Data in DB')
+send = []
+for team in kenpomTeams:
+    try:
+        send.append((set("kenpom", team), query.id == team['id']))
+    except:
+        print(team)
+teamsTable.update_multiple(send)
+print('Kenpom Data Updated')
+
+#Update Bart Stats
+print('Updating Barttorvik Data in DB')
+send = []
+for team in barttorvikTeams:
+    try:
+        send.append((set("barttorvik", team), query.id == team['id']))
+    except Exception as e:
+        print(e)
+        if bool(team):
+            print(team)
+teamsTable.update_multiple(send)
+print('Bart Data Updated')
 
 
-# #Add Odds
-# print("Adding Odds")
-# try:
-#     todayDate = datetime.datetime.now().strftime("%Y%m%d")
-#     oddsResponseMap, oddsResponseList = get_odds_by_date(todayDate)
-#     cacheTable.insert_multiple(oddsResponseList)
-#     print("Calculated Odds")
-# except Exception as e:
-#     print("Unable to add odds:", e)
+#Update Stats
+print('Updating Stats')
+#calculate averages
+try:
+    calculate.updateStats(query,teamsTable)
+    print("Stats Calculated")
+except Exception as e:
+    print("Unable to calculate Stats Error: ", e)
+
+
+
+#calculate records
+print("Calculating Records")
+try:
+    schedule.add_records_teams(teamsTable, query)
+    print("Records Calculated")
+except Exception as e:
+    print("Unable to calculate records Error: ", e)
+
+
+#Add Odds
+print("Adding Odds")
+try:
+    todayDate = datetime.datetime.now().strftime("%Y%m%d")
+    oddsResponseMap, oddsResponseList = get_odds_by_date(todayDate)
+    cacheTable.insert_multiple(oddsResponseList)
+    print("Calculated Odds")
+except Exception as e:
+    print("Unable to add odds:", e)
 
 
     
