@@ -2,13 +2,12 @@ from dataGatherer.kenpom import kenpom
 from dataGatherer.barttorvik import barttorvik
 from dataGatherer.calculate import calculate
 from tinydb.operations import set
-from utilscbb import db
+from utilscbb.db import get_db_name
 from dataGatherer.net import net
 import datetime
 import warnings
 from dataGatherer.record import schedule
-from dataGatherer.espn.getOdds import get_odds_by_date
-from utilscbb.constants import conferenceMap
+from utilscbb.espn import get_odds_by_date
 from constants import constants
 from dataGatherer.conferenceStandings import conferenceStandings
 
@@ -24,14 +23,11 @@ previous_date = current_date - datetime.timedelta(days=1)
 previous_date = previous_date.strftime("%Y%m%d")
 
 
-try:
-    query,teamsTable = db.get_db()
-    cacheQuery,cacheTable = db.get_cache()
-    standingsQuery,standingsTable = db.get_cs()
-except:
-    query,teamsTable = db.get_db_pa()
-    cacheQuery,cacheTable = db.get_cache_pa()
-    standingsQuery,standingsTable = db.get_cs_pa()
+#Get DB
+query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
+cacheQuery,cacheTable = get_db_name(constants.ODDS_CACHE_FILE, constants.ODDS_TABLE_NAME)
+standingsQuery,standingsTable = get_db_name(constants.CONFERENCE_STANDINGS_FILE, constants.CS_TABLE_NAME)
+
 
 print('Getting Kenpom Data')
 kenpomTeams = kenpom.UpdateKenpom()

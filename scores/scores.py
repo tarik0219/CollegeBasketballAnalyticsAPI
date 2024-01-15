@@ -3,7 +3,8 @@ import requests
 import json
 from datetime import datetime
 from dateutil import tz
-from utilscbb.db import get_db, get_cache
+from utilscbb.db import get_db_name
+from constants import constants
 from utilscbb.predict import make_prediction_api
 import time
 
@@ -123,10 +124,10 @@ def get_odds_data_dict(query, oddsTable, espnScores):
 
 def get_scores_data(date):
     espnScores = get_scores(date)
-    query,teamsTable = get_db()
+    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     teamsData = get_teams_data_dict(teamsTable)
     espnScoresList = []
-    oddsQuery,oddsTable = get_cache()
+    oddsQuery,oddsTable = get_db_name(constants.ODDS_CACHE_FILE, constants.ODDS_TABLE_NAME)
     oddsData = get_odds_data_dict(oddsQuery, oddsTable, espnScores)
     for gameId,game in espnScores.items():
         homeData = get_team_data(game['homeTeamId'], teamsData)

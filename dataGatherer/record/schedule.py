@@ -1,14 +1,13 @@
 import os
 import sys
 from tinydb.operations import set
-from utilscbb.appsync import get_schedule_data
-from constants.constants import year, netRankBool
+from constants import constants
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import concurrent.futures
 from utilscbb.schedule import get_team_schedule
 
 def load_url(team):
-    response = get_team_schedule(team['id'], year, netRankBool)
+    response = get_team_schedule(team['id'], constants.YEAR, constants.NET_RANK_BOOL)
     return response
 
 def get_schedule_data_concurrent(data):

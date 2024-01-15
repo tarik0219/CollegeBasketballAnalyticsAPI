@@ -6,9 +6,8 @@ import copy
 from utilscbb.config import apiKey
 import concurrent.futures
 from utilscbb.schedule import get_team_schedule
-from constants.constants import year, netRankBool
-from  utilscbb.db import get_db, get_db_pa
-import sys, os
+from constants import constants
+from  utilscbb.db import get_db_name
 
 def call_team_data(teamsTable):
     teams = teamsTable.all()
@@ -23,7 +22,7 @@ def get_standings_games(conference, teamData):
     conferenceGames = []
     standings = {}
     for team in teamIds:
-        response = get_team_schedule(team,year,netRankBool)
+        response = get_team_schedule(team,constants.YEAR,constants.NET_RANK_BOOL)
         standings[response['teamID']] = response['records']
         for game in response['games']:
             if game['gameType'] == 'CONF' and game['completed'] == False and game['homeTeamId'] == response['teamID']:

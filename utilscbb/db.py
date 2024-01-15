@@ -4,52 +4,20 @@ from constants import constants
 import os
 import json
 
-dbfile = os.path.join(os.getcwd(), constants.dbFileName)
-pafile = os.path.join(os.getcwd(), constants.paFileName)
+LOCAL_PATH = os.path.join(os.getcwd(), constants.LOCAL_PATH)
+PYTHON_ANYWHERE_PATH = os.path.join(os.getcwd(), constants.PYTHON_ANYWHERE_PATH)
 
-cacheFile = os.path.join(os.getcwd(), constants.cacheFileName)
-paCacheFile = os.path.join(os.getcwd(), constants.paCacheFileName)
 
-csFile = os.path.join(os.getcwd(), constants.csFileName)
-paCsFile = os.path.join(os.getcwd(), constants.paCsFileName)
 
-def get_db():
-    db = TinyDB(dbfile)
+def get_db_name(fileName, tableName):
+    if os.path.exists(LOCAL_PATH):
+        filePath = os.path.join(LOCAL_PATH, fileName)
+    else:
+        filePath = os.path.join(PYTHON_ANYWHERE_PATH, fileName)
+    db = TinyDB(filePath)
+    teamsTable = db.table(tableName)
     query = Query()
-    teamsTable = db.table('teams')
     return query,teamsTable
-
-def get_db_pa():
-    db = TinyDB(pafile)
-    query = Query()
-    teamsTable = db.table('teams')
-    return query,teamsTable
-
-
-def get_cache():
-    db = TinyDB(cacheFile)
-    query = Query()
-    cacheTable = db.table('cache')
-    return query,cacheTable
-
-def get_cache_pa():
-    db = TinyDB(paCacheFile)
-    query = Query()
-    cacheTable = db.table('cache')
-    return query,cacheTable
-
-def get_cs():
-    db = TinyDB(csFile)
-    query = Query()
-    cacheTable = db.table('cs')
-    return query,cacheTable
-
-def get_cs_pa():
-    db = TinyDB(paCsFile)
-    query = Query()
-    cacheTable = db.table('cs')
-    return query,cacheTable
-
 
 
 

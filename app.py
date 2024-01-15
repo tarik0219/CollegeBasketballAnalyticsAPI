@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request
-from utilscbb.db import get_db, get_cache, get_cs
+from utilscbb.db import get_db_name
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 from scores.scores import get_scores_data
 from utilscbb.schedule import get_team_schedule
-from constants.constants import year, netRankBool
+from constants import constants
 from utilscbb.espn import call_espn_team_standings_api
 from tinydb.operations import set
 app = Flask(__name__)
@@ -17,7 +17,7 @@ def home():
 #Get Team Data by ID
 @app.route('/teamData/<teamID>', methods=['GET'])
 def get_team_data(teamID):
-    query,teamsTable = get_db()
+    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     team = teamsTable.search(query.id == teamID)
     if len(team) > 0:
         return jsonify(team[0])
@@ -28,7 +28,7 @@ def get_team_data(teamID):
 #Get Team Data by Name
 @app.route('/teamData/teamName/<teamName>', methods=['GET'])
 def get_team_data_by_name(teamName):
-    query,teamsTable = get_db()
+    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     team = teamsTable.search(query.teamName == teamName)
     if len(team) > 0:
         return jsonify(team[0])
@@ -38,14 +38,14 @@ def get_team_data_by_name(teamName):
 #Get All Team Data
 @app.route('/teamData', methods=['GET'])
 def get_all_team_data():
-    query,teamsTable = get_db()
+    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     teams = teamsTable.all()
-    teamRecords = call_espn_team_standings_api(year)
+    teamRecords = call_espn_team_standings_api(constants.YEAR)
     for count,team in enumerate(teams):
         teamRecord = team['record']
         newTeamRecord = teamRecords[team['id']]
         if teamRecord['win'] + teamRecord['loss'] != newTeamRecord['win'] + newTeamRecord['loss']:
-            scheduleRecordData = get_team_schedule(team['id'],year, netRankBool)['records']
+            scheduleRecordData = get_team_schedule(team['id'],constants.YEAR, constants.NET_RANK_BOOL)['records']
             del scheduleRecordData["probs"]
             teamsTable.update(set("record", scheduleRecordData),query.id == team['id'])
             scheduleRecordData.update(newTeamRecord)
@@ -82,7 +82,7 @@ def predict_games():
     
 @app.route('/getOdds/<gameID>', methods=['GET'])
 def get_odds(gameID):
-    query,teamsTable = get_cache()
+    query,teamsTable = get_db_name(constants.ODDS_CACHE_FILE, constants.ODDS_TABLE_NAME)
     game = teamsTable.search(query.gameID == gameID)
     if len(game) > 0:
         return jsonify(game[0])
@@ -94,13 +94,13 @@ def get_odds(gameID):
 def get_odds_list():
     data = request.get_json()
     gameIDs = data['gameIDs']
-    query,cacheTable = get_cache()
+    query,cacheTable = get_db_name(constants.ODDS_CACHE_FILE, constants.ODDS_TABLE_NAME)
     response = cacheTable.search(query.gameID.one_of(gameIDs))
     return jsonify({"games":response})
 
 @app.route('/getConferenceStandings/<conference>', methods=['GET'])
 def get_conference_standings(conference):
-    query,teamsTable = get_cs()
+    query,teamsTable = get_db_name(constants.CONFERENCE_STANDINGS_FILE, constants.CS_TABLE_NAME)
     standings = teamsTable.search(query.conference == conference)
     if len(standings) > 0:
         return jsonify(standings)
