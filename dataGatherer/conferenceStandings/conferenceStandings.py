@@ -10,11 +10,7 @@ from constants.constants import year, netRankBool
 from  utilscbb.db import get_db, get_db_pa
 import sys, os
 
-def call_team_data():
-    try:
-        query,teamsTable = get_db()
-    except:
-        query,teamsTable = get_db_pa()
+def call_team_data(teamsTable):
     teams = teamsTable.all()
     return teams
 
@@ -90,8 +86,8 @@ def get_simulated_standings(conference, teamData):
             teams[team][place] = round(teams[team][place] / n * 100,2)
     return teams
 
-def get_all_unique_conferences():
-    response = call_team_data()
+def get_all_unique_conferences(teamsTable):
+    response = call_team_data(teamsTable)
     conferences = []
     for team in response:
         if team['conference'] not in conferences and team['conference'] != "IND":
@@ -100,9 +96,9 @@ def get_all_unique_conferences():
 
 
 
-def get_conference_standings_odds():
+def get_conference_standings_odds(query,teamsTable):
     conferenceStandingsMap = {}
-    conferences, teamData = get_all_unique_conferences()
+    conferences, teamData = get_all_unique_conferences(teamsTable)
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future_to_url = {executor.submit(get_simulated_standings, conference, teamData): conference for conference in conferences}
         for future in concurrent.futures.as_completed(future_to_url):

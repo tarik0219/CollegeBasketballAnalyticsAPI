@@ -103,7 +103,7 @@ except Exception as e:
 #Update Conference Standings
 print("Updating Conference Standings")
 try:
-    standings = conferenceStandings.get_conference_standings_odds()
+    standings = conferenceStandings.get_conference_standings_odds(query,teamsTable)
     send = []
     for key,team in standings.items():
         team['conference'] = key
