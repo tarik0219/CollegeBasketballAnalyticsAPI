@@ -7,34 +7,16 @@ from utilscbb.config import apiKey
 import concurrent.futures
 from utilscbb.schedule import get_team_schedule
 from constants.constants import year, netRankBool
+from  utilscbb.db import get_db, get_db_pa
+import sys, os
 
 def call_team_data():
-    url = "https://koric2.pythonanywhere.com/teamData"
-    payload={}
-    response = requests.request("GET", url, data=payload).json()
-    return response
-
-def get_schedule_query():
-    stringQuery = """
-        query ($teamID: String!, $year: Int!, $netRank: Boolean!) {
-          scheduleData(teamID: $teamID, year: $year, netRank: $netRank) {
-            teamID
-            games {
-                  completed
-                  winProbability
-                  opponentId
-                  homeTeamId
-                  gameType
-                }
-    
-            records {
-              confLoss
-              confWin
-            }
-                }
-        }
-        """
-    return stringQuery
+    try:
+        query,teamsTable = get_db()
+    except:
+        query,teamsTable = get_db_pa()
+    teams = teamsTable.all()
+    return teams
 
 def get_standings_games(conference, teamData):
     teamIds = []
@@ -88,7 +70,6 @@ def order_standings(standings):
 
 
 def get_simulated_standings(conference, teamData):
-    print(conference)
     teams = {}
     n = 1000
     conferenceGames, standings = get_standings_games(conference, teamData)

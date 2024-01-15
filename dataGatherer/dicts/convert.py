@@ -14,11 +14,11 @@ dir = os.path.dirname(path)
 #     json.dump(bt_id, fp)
 
 
-bt_id_file = 'conf_kp_sportsreference.pickle'
+bt_id_file = 'id_kp.pkl'
 
 with open(bt_id_file, 'rb') as f:
     bt_id = pickle.load(f)
 
 
-with open('conf_kp_sportsreference.json', 'w') as fp:
+with open('id_kp.json', 'w') as fp:
     json.dump(bt_id, fp)

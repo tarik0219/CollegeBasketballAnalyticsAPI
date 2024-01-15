@@ -4,13 +4,14 @@ import re
 import pickle
 import sys
 import os
+import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 path = os.path.realpath(__file__)
 dir = os.path.dirname(path)
-id_kp_file = dir.replace('kenpom', 'dicts') + '/id_kp.pkl'
-with open(id_kp_file, 'rb') as f:
-    id_kp = pickle.load(f)
+kp_id_file = dir.replace('kenpom', 'dicts') + '/id_kp.json'
+with open(kp_id_file) as json_file:
+    id_kp = json.load(json_file)
 
 conf_kp_sportsreference_file = dir.replace('kenpom', 'dicts') + '/conf_kp_sportsreference.pickle'
 with open(conf_kp_sportsreference_file, 'rb') as f:
