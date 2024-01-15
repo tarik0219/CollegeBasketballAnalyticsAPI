@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from utilscbb.db import get_db_name
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
-from scores.scores import get_scores_data
+from utilscbb.scores import get_scores_data
 from utilscbb.schedule import get_team_schedule
 from constants import constants
 from utilscbb.espn import call_espn_team_standings_api

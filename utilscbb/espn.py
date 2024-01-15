@@ -129,4 +129,70 @@ def get_odds_by_date(date):
             except:
                 print("Error getting odds for game: ", game['id'])
     return oddsResponseMap, oddsResponseList
+
+def get_half(period):
+    if period == 1:
+        return "1st"
+    elif period == 2:
+        return "2nd"
+    elif period >= 3:
+        return f"{period}OT"
+
+def call_espn_scores_api(date):
+    # Get ESPN LIVE SCORE DATA
+    url = 'http://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
+    response = requests.get(url, params={'limit': '500', 'groups': '50', 'dates': str(date)})
+    responseJson = response.json()
+    espnScores = {}
+    games = responseJson.get('events', {})
+    
+    if len(games) == 0:
+        return espnScores
+    
+    for game in games:
+        competition = game['competitions'][0]
+        date = competition['date']
+        date, time = convertDateTime(date)
+
+        siteType = competition.get('neutralSite')
+        gameId = game['id']
+        broadcast = None if len(competition.get('broadcasts',[{}])) == 0 else competition.get('broadcasts',[{}])[0].get('names', [None])[0]
+
+        # Team 1
+        team1 = competition['competitors'][0]
+        homeTeam = team1['team']['displayName']
+        homeTeamId = team1['team']['id']
+        homeScore = team1['score']
+
+        # Team 2
+        team2 = competition['competitors'][1]
+        awayTeam = team2['team']['displayName']
+        awayTeamId = team2['team']['id']
+        awayScore = team2['score']
+
+        # Game details
+        clock = game['status'].get('displayClock')
+        period = game['status'].get('period')
+        status = game['status']['type'].get('state')
+
+        espnGame = {
+            "date": date,
+            "time": time,
+            "broadcast": broadcast,
+            "siteType": siteType,
+            "clock": clock,
+            "period": period,
+            "status": status,
+            "homeTeam": homeTeam,
+            "homeTeamId": homeTeamId,
+            "homeScore": homeScore,
+            "awayTeam": awayTeam,
+            "awayTeamId": awayTeamId,
+            "awayScore": awayScore,
+            "half": get_half(period),
+            "gameId": gameId
+        }
+        espnScores[gameId] = espnGame
+
+    return espnScores
     

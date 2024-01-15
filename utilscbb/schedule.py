@@ -7,7 +7,7 @@ import sys, os
 from utilscbb.espn import call_espn_schedule_api
 from utilscbb.db import get_db_name
 from constants import constants
-from utilscbb.predict import make_prediction, make_prediction_api
+from utilscbb.predict import make_prediction_api
 import time
 
 
