@@ -70,6 +70,7 @@ def order_standings(standings):
 
 
 def get_simulated_standings(conference, teamData):
+    print(conference)
     teams = {}
     n = 1000
     conferenceGames, standings = get_standings_games(conference, teamData)
