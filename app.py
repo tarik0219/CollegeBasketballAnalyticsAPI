@@ -5,7 +5,7 @@ from requestModel.requestModel import PredictModel,PredictModelList
 from utilscbb.scores import get_scores_data
 from utilscbb.schedule import get_team_schedule
 from constants import constants
-from utilscbb.espn import call_espn_team_standings_api
+from utilscbb.espn import call_espn_team_standings_api, get_all_odds_by_date
 from tinydb.operations import set
 app = Flask(__name__)
 
@@ -117,6 +117,11 @@ def get_schedule():
     requestData = request.get_json()
     data = get_team_schedule(requestData['teamID'],requestData['year'],requestData['netRankBool'])
     return jsonify(data)
+
+@app.route('/odds/date/<date>', methods=['GET'])
+def get_odds_by_date(date):
+    return jsonify({"allOdds": get_all_odds_by_date(date)})
+
 
 if __name__ == '__main__':
     app.run() 

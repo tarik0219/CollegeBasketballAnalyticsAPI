@@ -130,6 +130,34 @@ def get_odds_by_date(date):
                 print("Error getting odds for game: ", game['id'])
     return oddsResponseMap, oddsResponseList
 
+import concurrent.futures
+
+def get_all_odds_by_date(date):
+    url = 'http://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/scoreboard'
+    response = requests.get(url,params={'limit':'500','groups':'50','dates': str(date)}).json()
+    oddsResponseList = []
+
+    def process_game(game):
+        oddsResponse = get_odds_by_game_id(game['id'])
+        sportsBooks = oddsResponse['items']
+        odds = {}
+        odds['gameID'] = game['id']
+        odds['homeTeamId'] = game['competitions'][0]['competitors'][0]['team']['id']
+        odds['awayTeamId'] = game['competitions'][0]['competitors'][1]['team']['id']
+        odds['homeTeam'] = game['competitions'][0]['competitors'][0]['team']['displayName']
+        odds['awayTeam'] = game['competitions'][0]['competitors'][1]['team']['displayName']
+        odds['neutralSite'] = game['competitions'][0].get('neutralSite', False)
+        odds['odds'] = sportsBooks
+        return odds
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        game_futures = [executor.submit(process_game, game) for game in response['events']]
+        for future in concurrent.futures.as_completed(game_futures):
+            oddsResponseList.append(future.result())
+
+    return oddsResponseList
+
+
 def get_half(period):
     if period == 1:
         return "1st"
