@@ -147,7 +147,10 @@ def get_all_odds_by_date(date):
         odds['homeTeam'] = game['competitions'][0]['competitors'][0]['team']['displayName']
         odds['awayTeam'] = game['competitions'][0]['competitors'][1]['team']['displayName']
         odds['neutralSite'] = game['competitions'][0].get('neutralSite', False)
-        odds['odds'] = sportsBooks
+        sportsBookMap = {}
+        for sportsBook in sportsBooks:
+            sportsBookMap[sportsBook['provider']['name']] = sportsBook
+        odds['odds'] = sportsBookMap
         return odds
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
