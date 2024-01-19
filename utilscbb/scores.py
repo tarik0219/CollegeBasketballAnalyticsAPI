@@ -59,7 +59,7 @@ def get_odds_data_dict(query, oddsTable, espnScores):
 
 def get_scores_data(date):
     espnScores = call_espn_scores_api(date)
-    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
+    query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     teamsData = get_teams_data_dict(teamsTable)
     espnScoresList = []
     oddsQuery,oddsTable = get_db_name(constants.ODDS_CACHE_FILE, constants.ODDS_TABLE_NAME)
