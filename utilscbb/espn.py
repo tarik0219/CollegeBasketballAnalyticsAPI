@@ -167,7 +167,7 @@ def get_half(period):
     elif period == 2:
         return "2nd"
     elif period >= 3:
-        return f"{period}OT"
+        return f"{period-2}OT"
 
 def call_espn_scores_api(date):
     # Get ESPN LIVE SCORE DATA
