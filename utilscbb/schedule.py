@@ -9,6 +9,8 @@ from utilscbb.db import get_db_name
 from constants import constants
 from utilscbb.predict import make_prediction_api
 import time
+import random
+import copy
 
 
 quadMap = {
@@ -86,6 +88,30 @@ def calculate_quad_record(data,rank):
                         else:
                             quad_records[quad]['losses'] += 1
     return quad_records
+
+
+def get_random_number():
+    return random.random()
+
+def calculate_projected_quad_record(data,rank,quad_records):
+    for game in data:
+        if not game['completed']:
+            if 'opponentData' in game and game['opponentData'] is not None:
+                if 'ranks' in game['opponentData'] and game['opponentData']['ranks'] is not None:
+                    if rank in game['opponentData']['ranks']:
+                        opponent_rank = game['opponentData']["ranks"][rank]
+                        venue = game["venue"]
+                        quad = quad_rank(opponent_rank,venue)
+                        quad_records[quad]['wins'] += game['winProbability']
+                        quad_records[quad]['losses'] +=  1 - game['winProbability']
+
+    #round each quad record
+    for quad in quad_records:
+        quad_records[quad]['wins'] = round(quad_records[quad]['wins'])
+        quad_records[quad]['losses'] = round(quad_records[quad]['losses'])
+    return quad_records
+
+
 
 def simulate(probs):
     games = len(probs)
@@ -204,8 +230,12 @@ def get_team_schedule(teamID, year, netRankBool):
     records = calculate_records(espnResponse, teamID)
     if netRankBool:
         quad_records = calculate_quad_record(espnResponse,'net_rank')
+        # make deep copy of quad_records
+        quad_records_copy = copy.deepcopy(quad_records)
+        projected_quad_records = calculate_projected_quad_record(espnResponse,'net_rank',copy.deepcopy(quad_records))
     else:
         quad_records = calculate_quad_record(espnResponse,'rank')
+        projected_quad_records = calculate_projected_quad_record(espnResponse,'rank',copy.deepcopy(quad_records))
     response = {
             "teamData": teamData,
             "games": espnResponse,
@@ -213,5 +243,6 @@ def get_team_schedule(teamID, year, netRankBool):
             "year": year,
             "records": records,
             "quadRecords": quad_records,
+            "projectedQuadRecords": projected_quad_records
         }
     return response
