@@ -14,9 +14,14 @@ import warnings
 warnings.warn = warn
 
 # Load the tournament model
-tournamentFile = os.path.join(os.getcwd(), "models/tournamentModel.pkl")
-with open(tournamentFile, 'rb') as f:
-    model = pickle.load(f)
+try:
+    tournamentFile = os.path.join(os.getcwd(), "models/tournamentModel.pkl")
+    with open(tournamentFile, 'rb') as f:
+        model = pickle.load(f)
+except:
+    tournamentFile = os.path.join(os.getcwd(), "CollegeBasketballAnalyticsAPI/models/tournamentModel.pkl")
+    with open(tournamentFile, 'rb') as f:
+        model = pickle.load(f)
 
 # Get all team data
 def get_all_team_data():
