@@ -128,5 +128,33 @@ def get_odds_oddsAPI():
     return jsonify(get_odds_predictions())
 
 
+@app.route('/bracketology', methods=['GET'])
+def get_bracketology():
+    with open('data/atLarge.txt', 'r') as file:
+        lines = file.readlines()
+        atLarge = [line.strip() for line in lines]
+    with open('data/champions.txt', 'r') as file:
+        lines = file.readlines()
+        champions = [line.strip() for line in lines]
+    
+    firstFourBye = atLarge[28:32]
+    lastFourIn = atLarge[32:36]
+    firstFourOut = atLarge[36:40]
+    nextFourOut = atLarge[40:44]
+    atLargeTeams = atLarge[:36]
+    bubble = atLarge[44:54]
+
+    data = {
+        "firstFourBye": firstFourBye,
+        "lastFourIn": lastFourIn,
+        "firstFourOut": firstFourOut,
+        "nextFourOut": nextFourOut,
+        "atLargeTeams": atLargeTeams,
+        "bubble": bubble,
+        "champions": champions
+    }
+    return data
+
+
 if __name__ == '__main__':
     app.run() 
