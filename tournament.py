@@ -45,9 +45,14 @@ for team in allTeamData:
         championTeams.add(team['teamName'])
 
 # Save conference champions to a text file
-with open('data/champions.txt', 'w') as f:
-    for team in championTeams:
-        f.write(team + '\n')
+try:
+    with open('data/champions.txt', 'w') as f:
+        for team in championTeams:
+            f.write(team + '\n')
+except:
+    with open('CollegeBasketballAnalyticsAPI/data/champions.txt', 'w') as f:
+        for team in championTeams:
+            f.write(team + '\n')
 
 # Calculate tournament odds for each team
 tournamentTeamOdds = []
@@ -76,6 +81,11 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 sorted_tournamentTeamOdds = sorted(tournamentTeamOdds, key=lambda x: x[1], reverse=True)
 
 # Save tournament odds teams to a text file
-with open('data/atLarge.txt', 'w') as f:
-    for team in sorted_tournamentTeamOdds:
-        f.write(team[0] + '\n')
+try:
+    with open('data/atLarge.txt', 'w') as f:
+        for team in sorted_tournamentTeamOdds:
+            f.write(team[0] + '\n')
+except:
+    with open('CollegeBasketballAnalyticsAPI/data/atLarge.txt', 'w') as f:
+        for team in sorted_tournamentTeamOdds:
+            f.write(team[0] + '\n')
