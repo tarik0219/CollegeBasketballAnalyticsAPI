@@ -155,6 +155,12 @@ def get_bracketology():
     }
     return data
 
+@app.route('/seed', methods=['GET'])
+def get_seed():
+    with open('data/seed.txt', 'r') as file:
+        lines = file.readlines()
+        seed_data = [line.strip().split(',') for line in lines]
+    return jsonify(seed_data)
 
 if __name__ == '__main__':
-    app.run() 
+    app.run()

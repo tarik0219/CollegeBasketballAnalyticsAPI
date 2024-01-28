@@ -1,0 +1,68 @@
+1,Purdue Boilermakers,0,0
+1,Houston Cougars,0,0
+1,Arizona Wildcats,1,0
+1,UConn Huskies,1,0
+2,North Carolina Tar Heels,1,0
+2,Tennessee Volunteers,0,0
+2,Wisconsin Badgers,1,0
+2,BYU Cougars,0,0
+3,Alabama Crimson Tide,1,0
+3,Iowa State Cyclones,0,0
+3,Kansas Jayhawks,0,0
+3,Marquette Golden Eagles,0,0
+4,Baylor Bears,0,0
+4,Auburn Tigers,0,0
+4,Creighton Bluejays,0,0
+4,San Diego State Aztecs,0,0
+5,Illinois Fighting Illini,0,0
+5,Utah State Aggies,1,0
+5,Dayton Flyers,0,0
+5,Kentucky Wildcats,0,0
+6,Duke Blue Devils,0,0
+6,Texas Tech Red Raiders,1,0
+6,Saint Mary's Gaels,1,0
+6,New Mexico Lobos,0,0
+7,Colorado State Rams,0,0
+7,Clemson Tigers,0,0
+7,St. John's Red Storm,0,0
+7,Oklahoma Sooners,0,0
+8,Florida Atlantic Owls,0,0
+8,Michigan State Spartans,0,0
+8,Utah Utes,0,0
+8,Mississippi State Bulldogs,0,0
+9,TCU Horned Frogs,0,0
+9,Indiana State Sycamores,1,0
+9,Boise State Broncos,0,0
+9,South Carolina Gamecocks,0,0
+10,Ole Miss Rebels,0,0
+10,Colorado Buffaloes,0,0
+10,Nevada Wolf Pack,0,0
+10,Memphis Tigers,0,0
+11,Princeton Tigers,0,0
+11,Gonzaga Bulldogs,0,1
+11,Northwestern Wildcats,0,1
+11,Providence Friars,0,1
+11,Florida Gators,0,1
+11,Charlotte 49ers,1,0
+12,Richmond Spiders,1,0
+12,McNeese Cowboys,1,0
+12,Morehead State Eagles,1,0
+12,Akron Zips,1,0
+13,Eastern Washington Eagles,1,0
+13,Samford Bulldogs,1,0
+13,UC Irvine Anteaters,1,0
+13,Grand Canyon Lopes,1,0
+14,Cornell Big Red,1,0
+14,Appalachian State Mountaineers,1,0
+14,Vermont Catamounts,1,0
+14,High Point Panthers,1,0
+15,Drexel Dragons,1,0
+15,Quinnipiac Bobcats,1,0
+15,South Dakota State Jackrabbits,1,0
+15,Green Bay Phoenix,1,0
+16,Sam Houston Bearkats,1,0
+16,Eastern Kentucky Colonels,1,0
+16,Alabama State Hornets,1,1
+16,Central Connecticut Blue Devils,1,1
+16,Delaware State Hornets,1,1
+16,Lafayette Leopards,1,1
