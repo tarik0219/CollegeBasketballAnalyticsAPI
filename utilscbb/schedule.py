@@ -11,6 +11,17 @@ from utilscbb.predict import make_prediction_api
 import time
 import random
 import copy
+import json
+
+# Specify the file path
+try:
+    file_path = "data/tournamentDates.json"
+    with open(file_path, "r") as file:
+        tournamentDates = json.load(file)
+except:
+    file_path = "CollegeBasketballAnalyticsAPI/data/tournamentDates.json"
+    with open(file_path, "r") as file:
+        tournamentDates = json.load(file)
 
 
 quadMap = {
@@ -37,12 +48,19 @@ def team_data_to_dict(teamData):
         teamDict[team['id']] = team
     return teamDict
 
-def change_game_type(teamData, opponentData, gameType):
+def change_game_type(teamData, opponentData, gameType, date):
     if gameType == "POST":
         return "POST"
     if opponentData:
         if teamData['conference'] == opponentData['conference']:
-            return "CONF"
+            confDate = tournamentDates[teamData['conference']]
+            #convert date to datetime object confDate is yyyy-mm-dd
+            confDate = datetime.strptime(confDate, '%Y-%m-%d')
+            gameDate = datetime.strptime(date, '%Y-%m-%d')
+            if gameDate < confDate:
+                return "CONF"
+            else:
+                return "CONFTOUR"
     return "REG"
 
 def add_odds(espnResponse):
@@ -225,7 +243,7 @@ def get_team_schedule(teamID, year, netRankBool):
         espnResponse[count]['scorePrediction'] = homeScore
         espnResponse[count]['opponentScorePrediction'] = awayScore
         espnResponse[count]['winProbability'] = prob
-        espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'])
+        espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'], game['date'])
     espnResponse = add_odds(espnResponse)
     records = calculate_records(espnResponse, teamID)
     if netRankBool:
