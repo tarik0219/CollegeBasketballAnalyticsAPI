@@ -72,26 +72,32 @@ def get_odds_predictions():
 
     for game in odds:
         if game['homeTeamName'] + game['awayTeamName'] in gamesDict:
-            game['siteType'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['siteType']
-            game["prob"] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['prob']
-            game['homeScorePredict'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['homeScorePredict'] 
-            game['awayScorePredict'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['awayScorePredict']
-            game['status'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['status']
-            game['gameId'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['gameId']
-            game['date'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['date']
-            game['homeTeamId'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['homeTeamId']
-            game['awayTeamId'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['awayTeamId']
-            finalOdds.append(game)
+            try:
+                game['siteType'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['siteType']
+                game["prob"] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['prob']
+                game['homeScorePredict'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['homeScorePredict'] 
+                game['awayScorePredict'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['awayScorePredict']
+                game['status'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['status']
+                game['gameId'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['gameId']
+                game['date'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['date']
+                game['homeTeamId'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['homeTeamId']
+                game['awayTeamId'] = gamesDict[game['homeTeamName'] + game['awayTeamName']]['awayTeamId']
+                finalOdds.append(game)
+            except:
+                continue
         if game['awayTeamName'] + game['homeTeamName'] in gamesDict:
-            game['siteType'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['siteType']
-            game['homeTeamName'], game['awayTeamName'] = game['awayTeamName'], game['homeTeamName']
-            game["prob"] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['prob']
-            game['homeScorePredict'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['homeScorePredict']
-            game['awayScorePredict'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['awayScorePredict']
-            game['status'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['status']
-            game['gameId'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['gameId']
-            game['date'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['date']
-            game['homeTeamId'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['homeTeamId']
-            game['awayTeamId'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['awayTeamId']
-            finalOdds.append(game)
+            try:
+                game['siteType'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['siteType']
+                game['homeTeamName'], game['awayTeamName'] = game['awayTeamName'], game['homeTeamName']
+                game["prob"] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['prob']
+                game['homeScorePredict'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['homeScorePredict']
+                game['awayScorePredict'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['awayScorePredict']
+                game['status'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['status']
+                game['gameId'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['gameId']
+                game['date'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['date']
+                game['homeTeamId'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['homeTeamId']
+                game['awayTeamId'] = gamesDict[game['awayTeamName'] + game['homeTeamName']]['awayTeamId']
+                finalOdds.append(game)
+            except:
+                continue
     return finalOdds
