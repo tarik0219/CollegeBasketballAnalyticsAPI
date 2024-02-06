@@ -121,6 +121,7 @@ def main():
         if counter > 4:
             seedCount += 1
             counter = 1
+        print(team[0], team[1])
 
     counterLast = 0
     for team in lastFourIn:
@@ -132,6 +133,7 @@ def main():
         if counter > 4:
             seedCount += 1
             counter = 1
+        print(team[0], team[1])
 
     for team in lowerChamp:
         if seedCount == 16 and counter >= 3:
@@ -145,6 +147,7 @@ def main():
         if seedCount == 16 and counter > 3:
             seedCount = 16
             counter = 3
+        print(team[0], team[1])
     
     #output final to txt file
     try:
