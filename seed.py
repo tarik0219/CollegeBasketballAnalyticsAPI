@@ -31,6 +31,7 @@ def get_schedule(teamID,year,netRankBool):
 def get_team_seed_ratings(teams, teamDict, model, champion):
     ratings = []
     for team in teams:
+        
         teamSchedule = get_schedule(teamDict[team]['id'], 2024, True)
         win = teamSchedule['records']['projectedWin']
         loss = teamSchedule['records']['projectedLoss']
@@ -43,7 +44,7 @@ def get_team_seed_ratings(teams, teamDict, model, champion):
         q4w = teamSchedule['projectedQuadRecords']['quad4']['wins']
         q4l = teamSchedule['projectedQuadRecords']['quad4']['losses']
         rank = teamSchedule['teamData']['ranks']['net_rank']
-        input = np.array([[win, loss, q1w, q1l, q2w, q2l, q3w, q3l, q4w, q4l, rank]])
+        input = np.array([[q1w, q1l, q2w, q2l, q3w, q3l, q4w, q4l, rank]])
         probs = model.predict_proba(input)[0]
         rating = 0
         for p,s in zip(probs,model.classes_):
@@ -80,10 +81,10 @@ def main():
     bracktology = call_bracketology()
     teamDict = get_teams_dict()
     try:
-        with open('models/seedModel.pkl', 'rb') as f:
+        with open('models/seedModelV2.pkl', 'rb') as f:
             model = pickle.load(f)
     except: 
-        with open('CollegeBasketballAnalyticsAPI/models/seedModel.pkl', 'rb') as f:
+        with open('CollegeBasketballAnalyticsAPI/models/seedModelV2.pkl', 'rb') as f:
             model = pickle.load(f)
 
     atLargeLock = bracktology['atLargeTeams'][0:28]
@@ -133,7 +134,7 @@ def main():
         if counter > 4:
             seedCount += 1
             counter = 1
-        print(team[0], team[1])
+        print(team)
 
     for team in lowerChamp:
         if seedCount == 16 and counter >= 3:
