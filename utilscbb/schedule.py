@@ -23,6 +23,13 @@ quadMap = {
     "quad4": 4
 }
 
+mapQuad = {
+    1:"quad1",
+    2:"quad2",
+    3:"quad3",
+    4:"quad4"
+}
+
 def quad_rank(opponent_rank,venue):
     if (opponent_rank <= 30 and venue == 'H') or (opponent_rank <= 50 and venue == 'N') or (opponent_rank <= 75 and venue == '@'):
         quad = "quad1"
@@ -81,14 +88,14 @@ def calculate_quad_record(data,rank):
     "quad4": {'wins': 0, 'losses': 0} 
     }
     for item in data:
+        if item['quad'] == 0:
+            continue
         if item['completed']:
             #check if item has opponent data and ranks and rank
             if 'opponentData' in item and item['opponentData'] is not None:
                 if 'ranks' in item['opponentData'] and item['opponentData']['ranks'] is not None:
                     if rank in item['opponentData']['ranks']:
-                        opponent_rank = item['opponentData']["ranks"][rank]
-                        venue = item["venue"]
-                        quad = quad_rank(opponent_rank,venue)
+                        quad = mapQuad[item['quad']]
                         if item['result'] == 'W':
                             quad_records[quad]['wins'] += 1
                         else:
@@ -101,13 +108,13 @@ def get_random_number():
 
 def calculate_projected_quad_record(data,rank,quad_records):
     for game in data:
+        if game['quad'] == 0:
+            continue
         if not game['completed']:
             if 'opponentData' in game and game['opponentData'] is not None:
                 if 'ranks' in game['opponentData'] and game['opponentData']['ranks'] is not None:
                     if rank in game['opponentData']['ranks']:
-                        opponent_rank = game['opponentData']["ranks"][rank]
-                        venue = game["venue"]
-                        quad = quad_rank(opponent_rank,venue)
+                        quad = mapQuad[game['quad']]
                         quad_records[quad]['wins'] += game['winProbability']
                         quad_records[quad]['losses'] +=  1 - game['winProbability']
 
@@ -211,8 +218,11 @@ def get_team_schedule(teamID, year, netRankBool):
     for count,game in enumerate(espnResponse):
         opponentData = teamsDict[game['opponentId']] if game['opponentId'] in teamsDict else None
         espnResponse[count]['opponentData'] = opponentData
+        espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'], game['date'], game['notes'])
         if opponentData != None:
-            if netRankBool:
+            if game['gameType'] != "REG" and game['gameType'] != "CONF":
+                espnResponse[count]['quad'] = 0
+            elif netRankBool:
                 espnResponse[count]['quad'] = quadMap[quad_rank(opponentData['ranks']['net_rank'], game['venue'])]
             else:
                 espnResponse[count]['quad'] = quadMap[quad_rank(opponentData['ranks']['rank'], game['venue'])]
@@ -231,7 +241,6 @@ def get_team_schedule(teamID, year, netRankBool):
         espnResponse[count]['scorePrediction'] = homeScore
         espnResponse[count]['opponentScorePrediction'] = awayScore
         espnResponse[count]['winProbability'] = prob
-        espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'], game['date'], game['notes'])
     espnResponse = add_odds(espnResponse)
     records = calculate_records(espnResponse, teamID)
     if netRankBool:
