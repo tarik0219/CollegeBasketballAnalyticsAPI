@@ -48,16 +48,12 @@ def team_data_to_dict(teamData):
         teamDict[team['id']] = team
     return teamDict
 
-def change_game_type(teamData, opponentData, gameType, date):
+def change_game_type(teamData, opponentData, gameType, date, notes):
     if gameType == "POST":
         return "POST"
     if opponentData:
         if teamData['conference'] == opponentData['conference']:
-            confDate = tournamentDates[teamData['conference']]
-            #convert date to datetime object confDate is yyyy-mm-dd
-            confDate = datetime.strptime(confDate, '%Y-%m-%d')
-            gameDate = datetime.strptime(date, '%Y-%m-%d')
-            if gameDate < confDate:
+            if len(notes) == 0:
                 return "CONF"
             else:
                 return "CONFTOUR"
@@ -243,7 +239,7 @@ def get_team_schedule(teamID, year, netRankBool):
         espnResponse[count]['scorePrediction'] = homeScore
         espnResponse[count]['opponentScorePrediction'] = awayScore
         espnResponse[count]['winProbability'] = prob
-        espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'], game['date'])
+        espnResponse[count]['gameType'] = change_game_type(teamData, opponentData, game['gameType'], game['date'], game['notes'])
     espnResponse = add_odds(espnResponse)
     records = calculate_records(espnResponse, teamID)
     if netRankBool:

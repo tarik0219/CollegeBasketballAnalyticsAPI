@@ -18,7 +18,7 @@ def home():
 #Get Team Data by ID
 @app.route('/teamData/<teamID>', methods=['GET'])
 def get_team_data(teamID):
-    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
+    query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     team = teamsTable.search(query.id == teamID)
     if len(team) > 0:
         return jsonify(team[0])
@@ -29,7 +29,7 @@ def get_team_data(teamID):
 #Get Team Data by Name
 @app.route('/teamData/teamName/<teamName>', methods=['GET'])
 def get_team_data_by_name(teamName):
-    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
+    query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     team = teamsTable.search(query.teamName == teamName)
     if len(team) > 0:
         return jsonify(team[0])
@@ -39,7 +39,7 @@ def get_team_data_by_name(teamName):
 #Get All Team Data
 @app.route('/teamData', methods=['GET'])
 def get_all_team_data():
-    query,teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
+    query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
     teams = teamsTable.all()
     teamRecords = call_espn_team_standings_api(constants.YEAR)
     for count,team in enumerate(teams):

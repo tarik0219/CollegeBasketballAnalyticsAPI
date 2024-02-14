@@ -36,11 +36,26 @@ def get_all_team_data():
 
 allTeamData = get_all_team_data()
 
+#open conferenceWinners.txt and save each line into a set
+conferenceWinners = set()
+try:
+    with open('data/conferenceWinners.txt', 'r') as f:
+        for line in f:
+            conferenceWinners.add(line.strip())
+except:
+    with open('CollegeBasketballAnalyticsAPI/data/conferenceWinners.txt', 'r') as f:
+        for line in f:
+            conferenceWinners.add(line.strip())
+
+
 # Get conference champions
 conferenceChampions = {}
 championTeams = set()
 for team in allTeamData:
-    if team['record']['conferenceStanding'] == 1 and team['conference'] != "IND":
+    if team['teamName'] in conferenceWinners:
+        conferenceChampions[team['conference']] = team['teamName']
+        championTeams.add(team['teamName'])
+    elif team['record']['conferenceStanding'] == 1 and team['conference'] != "IND" and team['conference'] not in conferenceChampions:
         conferenceChampions[team['conference']] = team['teamName']
         championTeams.add(team['teamName'])
 
