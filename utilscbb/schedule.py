@@ -14,14 +14,6 @@ import copy
 import json
 
 # Specify the file path
-try:
-    file_path = "data/tournamentDates.json"
-    with open(file_path, "r") as file:
-        tournamentDates = json.load(file)
-except:
-    file_path = "CollegeBasketballAnalyticsAPI/data/tournamentDates.json"
-    with open(file_path, "r") as file:
-        tournamentDates = json.load(file)
 
 
 quadMap = {
