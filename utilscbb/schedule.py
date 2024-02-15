@@ -88,7 +88,10 @@ def calculate_quad_record(data,rank):
     "quad4": {'wins': 0, 'losses': 0} 
     }
     for item in data:
-        if item['quad'] == 0:
+        try:
+            if item['quad'] == 0:
+                continue
+        except:
             continue
         if item['completed']:
             #check if item has opponent data and ranks and rank
@@ -108,7 +111,10 @@ def get_random_number():
 
 def calculate_projected_quad_record(data,rank,quad_records):
     for game in data:
-        if game['quad'] == 0:
+        try:
+            if game['quad'] == 0:
+                continue
+        except:
             continue
         if not game['completed']:
             if 'opponentData' in game and game['opponentData'] is not None:
