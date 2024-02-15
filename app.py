@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from utilscbb.db import get_db_name
+from utilscbb.db import get_db_name, Database
 from utilscbb.predict import make_prediction_api
 from requestModel.requestModel import PredictModel,PredictModelList
 from utilscbb.scores import get_scores_data
@@ -116,7 +116,13 @@ def get_scores(date):
 @app.route('/teamSchedule', methods=['POST'])
 def get_schedule():
     requestData = request.get_json()
-    data = get_team_schedule(requestData['teamID'],requestData['year'],requestData['netRankBool'])
+    db = Database(constants.DATABASE_FILE, constants.TEAMS_TABLE_NAME)
+    teamData = db.queryById(requestData['teamID'])
+    if "net_rank" in teamData['ranks']:
+        netRankBool = True
+    else:
+        netRankBool = False
+    data = get_team_schedule(requestData['teamID'],requestData['year'],netRankBool)
     return jsonify(data)
 
 @app.route('/odds/date/<date>', methods=['GET'])

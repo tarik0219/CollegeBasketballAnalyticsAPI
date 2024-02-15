@@ -3,6 +3,7 @@ NET_RANK_BOOL = True
 PYTHON_ANYWHERE_PATH = "CollegeBasketballAnalyticsAPI/data/"
 LOCAL_PATH = "data/"
 TEAMS_DATA_FILE = "cbbweb.json"
+DATABASE_FILE = "data/cbbweb.json"
 ODDS_CACHE_FILE = "oddsCache.json"
 CONFERENCE_STANDINGS_FILE = "conferenceStandings.json"
 TEAMS_TABLE_NAME = "teams"

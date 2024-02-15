@@ -5,7 +5,7 @@ import pytz
 import json
 import sys, os
 from utilscbb.espn import call_espn_schedule_api
-from utilscbb.db import get_db_name
+from utilscbb.db import get_db_name, Database
 from constants import constants
 from utilscbb.predict import make_prediction_api
 import time
@@ -206,9 +206,8 @@ def calculate_records(data, teamID):
 
 def get_team_schedule(teamID, year, netRankBool):
     espnResponse = call_espn_schedule_api(teamID, year)
-    query, teamsTable = query,teamsTable = get_db_name(constants.TEAMS_DATA_FILE, constants.TEAMS_TABLE_NAME)
-    teamsData = teamsTable.all()
-    teamsDict = team_data_to_dict(teamsData)
+    teamDatabase = Database(constants.DATABASE_FILE, constants.TEAMS_TABLE_NAME)
+    teamsDict = teamDatabase.teamsToDict()
     teamData = teamsDict[teamID]
     for count,game in enumerate(espnResponse):
         opponentData = teamsDict[game['opponentId']] if game['opponentId'] in teamsDict else None
@@ -241,8 +240,6 @@ def get_team_schedule(teamID, year, netRankBool):
     records = calculate_records(espnResponse, teamID)
     if netRankBool:
         quad_records = calculate_quad_record(espnResponse,'net_rank')
-        # make deep copy of quad_records
-        quad_records_copy = copy.deepcopy(quad_records)
         projected_quad_records = calculate_projected_quad_record(espnResponse,'net_rank',copy.deepcopy(quad_records))
     else:
         quad_records = calculate_quad_record(espnResponse,'rank')

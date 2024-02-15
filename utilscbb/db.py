@@ -21,36 +21,42 @@ def get_db_name(fileName, tableName):
 
 
 
+class Database:
+    def __init__(self, filePath, tableName):
+        self.db = TinyDB(filePath)
+        self.table = self.db.table(tableName)
+        self.query = Query()
+        
+    #insert data into the table
+    def insert(self, data):
+        self.table.insert(data)
 
-# class S3Storage(Storage):
-#     def __init__(self, bucket, file):
-#         self.bucket = bucket
-#         self.file = file
-#         self.client = boto3.resource('s3', aws_access_key_id="", aws_secret_access_key="")
-#     def read(self):
-#         obj = self.client.Object(self.bucket, self.file)
-#         data = obj.get()
+    def upsert(self, data, id):
+        self.table.upsert(data, self.query.id == id)
+    
+    def _add_multi_key(self, data, keys):
+        def transform(doc):
+            key = keys.pop(0)
+            if len(keys) == 0:
+                doc[key] = data
+            else:
+                if key in doc:
+                    transform(doc[key])
+        return transform
+    
+    def teamsToDict(self):
+        teamData = self.table.all()
+        teamDict = {}
+        for team in teamData:
+            teamDict[team['id']] = team
+        return teamDict
 
-#         return json.loads(data['Body'].read())
-#     def write(self, data):
-#         self.client.Object(self.bucket, self.file).put(Body=json.dumps(data))
-#     def close(self):
-#         pass
+    def updateByKeys(self, data, id, keys):
+        self.table.update(self._add_multi_key(data, keys), self.query.id == id)
 
-# def get_db_s3():
-#     db = TinyDB(bucket='cbbwebdb', file='cbbweb.json', storage=S3Storage)
-#     query = Query()
-#     teamsTable = db.table('teams')
-#     return query,teamsTable
-
-# def get_cache_s3():
-#     db = TinyDB(bucket='cbbwebdb', file='oddsCache.json', storage=S3Storage)
-#     query = Query()
-#     cacheTable = db.table('cache')
-#     return query,cacheTable
-
-# def get_cs_s3():
-#     db = TinyDB(bucket='cbbwebdb', file='conferenceStandings.json', storage=S3Storage)
-#     query = Query()
-#     cacheTable = db.table('cs')
-#     return query,cacheTable 
+    def queryById(self, id):
+        items = self.table.search(self.query.id == id)
+        if len(items) > 0:
+            return items[0]
+        else:
+            return None
