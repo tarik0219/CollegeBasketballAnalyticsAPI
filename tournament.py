@@ -94,7 +94,6 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 
 # Sort tournament team odds
 sorted_tournamentTeamOdds = sorted(tournamentTeamOdds, key=lambda x: x[1], reverse=True)
-print(sorted_tournamentTeamOdds)
 
 # Save tournament odds teams to a text file
 try:
