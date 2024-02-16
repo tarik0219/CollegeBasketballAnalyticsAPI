@@ -23,7 +23,10 @@ def get_db_name(fileName, tableName):
 
 class Database:
     def __init__(self, filePath, tableName):
-        self.db = TinyDB(filePath)
+        try:
+            self.db = TinyDB(filePath)
+        except:
+            self.db = TinyDB("CollegeBasketballAnalyticsAPI/"+filePath)
         self.table = self.db.table(tableName)
         self.query = Query()
         
