@@ -215,7 +215,7 @@ def get_team_schedule(teamID, year, netRankBool):
         gameType = change_game_type(teamData, opponentData, game['gameType'], game['date'], game['notes'])
         espnResponse[count]['gameType'] = gameType
         if opponentData != None:
-            if gameType != "REG" and gameType != "CONF":
+            if gameType != "REG" and gameType != "CONF" and gameType != "CONFTOUR":
                 espnResponse[count]['quad'] = 0
             elif netRankBool:
                 espnResponse[count]['quad'] = quadMap[quad_rank(opponentData['ranks']['net_rank'], game['venue'])]
