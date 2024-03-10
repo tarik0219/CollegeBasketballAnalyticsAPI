@@ -55,7 +55,8 @@ for team in allTeamData:
     if team['teamName'] in conferenceWinners:
         conferenceChampions[team['conference']] = team['teamName']
         championTeams.add(team['teamName'])
-    elif team['record']['conferenceStanding'] == 1 and team['conference'] != "IND" and team['conference'] not in conferenceChampions:
+for team in allTeamData:
+    if team['record']['conferenceStanding'] == 1 and team['conference'] != "IND" and team['conference'] not in conferenceChampions:
         conferenceChampions[team['conference']] = team['teamName']
         championTeams.add(team['teamName'])
 
