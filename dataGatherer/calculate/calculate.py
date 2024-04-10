@@ -91,7 +91,7 @@ def addNetRank(data):
         return data
 
 def addRank(data):
-    data.sort(key=lambda x: x['ranks']["stat_rank"] * .25  + x['ranks']["ap_rank"] * .50 +x['ranks']["net_rank"] * .25, reverse=False)
+    data.sort(key=lambda x: x['ranks']["stat_rank"] * .55  + x['ranks']["ap_rank"] * .50 +x['ranks']["net_rank"] * 0, reverse=False)
     for count,team in enumerate(data):
         team['ranks']['rank'] = count + 1
         data[count] = team
